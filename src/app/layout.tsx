@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Comic_Neue } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider, ThemeScript } from "@/contexts/ThemeContext";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import ClientLayout from "./ClientLayout";
 
 const comicNeue = Comic_Neue({
@@ -45,16 +45,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="age-7-10" suppressHydrationWarning>
-      <head>
-        <ThemeScript />
-      </head>
-      <body className={`${comicNeue.variable} min-h-screen flex flex-col bg-color-background text-color-foreground`}>
-        <ThemeProvider defaultTheme="system">
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${comicNeue.variable} min-h-screen`}>
+        <AppRouterCacheProvider>
           <ClientLayout>
             {children}
           </ClientLayout>
-        </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
