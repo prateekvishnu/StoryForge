@@ -449,8 +449,17 @@ export default function CharacterBuilder({
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 4, textAlign: 'center', fontWeight: 'bold' }}>
-        <PersonIcon sx={{ mr: 2, verticalAlign: 'middle' }} />
+      <Typography 
+        variant="h2" 
+        sx={{ 
+          mb: 6, 
+          textAlign: 'center', 
+          fontWeight: 700,
+          fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
+          color: 'text.primary',
+        }}
+      >
+        <PersonIcon sx={{ mr: 2, verticalAlign: 'middle', fontSize: 'inherit' }} />
         Character Builder
       </Typography>
 

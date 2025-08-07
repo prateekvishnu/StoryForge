@@ -37,10 +37,14 @@ export default function HomePage() {
         <Typography 
           variant="h1" 
           sx={{ 
-            fontSize: { xs: '2.5rem', md: '3.5rem' }, 
-            fontWeight: 'bold', 
-            color: 'primary.main', 
-            mb: 2 
+            fontSize: { xs: '3rem', sm: '4rem', md: '5rem' }, 
+            fontWeight: 800, 
+            background: 'linear-gradient(135deg, #60a5fa 30%, #34d399 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 4,
+            lineHeight: 1.1,
+            letterSpacing: '-0.025em',
           }}
         >
           Welcome to StoryForge! ✨
@@ -48,15 +52,16 @@ export default function HomePage() {
         <Typography 
           variant="h4" 
           sx={{ 
-            fontSize: { xs: '1.25rem', md: '1.5rem' }, 
+            fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }, 
             color: 'text.secondary', 
-            maxWidth: '600px', 
+            maxWidth: '700px', 
             mx: 'auto', 
-            mb: 4,
-            lineHeight: 1.6 
+            mb: 6,
+            lineHeight: 1.4,
+            fontWeight: 500,
           }}
         >
-          Create amazing adventures with AI magic! 📚
+          Create amazing adventures with AI magic! Build characters, craft stories, and bring your imagination to life! 📚
         </Typography>
         
         <Stack 
