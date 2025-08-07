@@ -18,102 +18,97 @@ export default function Header({ ageGroup = '7-10', userName, onAccessibilityTog
   };
 
   return (
-    <header className={`bg-color-background shadow-lg border-b-4 border-color-primary sticky top-0 z-50 age-${ageGroup}`}>
-      <div className="container-child">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo and Brand */}
-          <div className="flex items-center gap-3">
+    <header className="bg-color-background/95 backdrop-blur-sm border-b border-color-background-accent sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-18">
+          
+          {/* Logo Section - Left Aligned */}
+          <div className="flex items-center flex-shrink-0">
             <Link 
               href="/" 
-              className="flex items-center gap-3 text-color-primary hover:text-color-fun transition-colors focus-ring rounded-lg p-1"
+              className="flex items-center gap-3 text-color-primary hover:text-color-fun transition-colors duration-200 focus-ring rounded-lg p-2 -ml-2"
               aria-label="StoryForge Home"
             >
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-color-primary to-color-fun rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-xl md:text-2xl" role="img" aria-label="Story book">📚</span>
+              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-color-primary to-color-fun rounded-xl flex items-center justify-center shadow-md">
+                <span className="text-lg lg:text-xl" role="img" aria-label="Story book">📚</span>
               </div>
-              <span className={`font-bold ${ageGroup === '7-10' ? 'text-xl md:text-2xl' : 'text-lg md:text-xl'} text-color-primary`}>
+              <span className="font-bold text-lg lg:text-xl text-color-primary tracking-tight">
                 StoryForge
               </span>
             </Link>
           </div>
 
-          {/* Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center gap-4" aria-label="Main navigation">
-            <Link 
-              href="/create" 
-              className="touch-target bg-color-secondary text-white rounded-xl hover:bg-green-600 hover:shadow-lg transition-all focus-ring px-4 py-2"
-              aria-label="Create new story"
-            >
-              <span className="mr-2" role="img" aria-label="Create">✨</span>
-              Create Story
-            </Link>
-            <Link 
-              href="/read" 
-              className="touch-target bg-color-accent text-white rounded-xl hover:bg-orange-600 hover:shadow-lg transition-all focus-ring px-4 py-2"
-              aria-label="Read stories"
-            >
-              <span className="mr-2" role="img" aria-label="Read">📖</span>
-              Read Stories
-            </Link>
-            <Link 
-              href="/characters" 
-              className="touch-target bg-color-fun text-white rounded-xl hover:bg-purple-600 hover:shadow-lg transition-all focus-ring px-4 py-2"
-              aria-label="Character builder"
-            >
-              <span className="mr-2" role="img" aria-label="Character">👤</span>
-              Characters
-            </Link>
+          {/* Main Navigation - Center */}
+          <nav className="hidden lg:flex items-center justify-center flex-1 max-w-md mx-8" aria-label="Main navigation">
+            <div className="flex items-center gap-2">
+              <Link 
+                href="/create" 
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-secondary text-white rounded-lg hover:bg-green-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
+                aria-label="Create new story"
+              >
+                <span className="text-base" role="img" aria-label="Create">✨</span>
+                Create
+              </Link>
+              <Link 
+                href="/read" 
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-accent text-white rounded-lg hover:bg-orange-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
+                aria-label="Read stories"
+              >
+                <span className="text-base" role="img" aria-label="Read">📖</span>
+                Read
+              </Link>
+              <Link 
+                href="/characters" 
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-fun text-white rounded-lg hover:bg-purple-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
+                aria-label="Character builder"
+              >
+                <span className="text-base" role="img" aria-label="Character">👤</span>
+                Characters
+              </Link>
+            </div>
           </nav>
 
-          {/* User Section - Desktop */}
-          <div className="hidden lg:flex items-center gap-3">
+          {/* User Actions - Right Aligned */}
+          <div className="flex items-center gap-3">
+            
+            {/* User Greeting - Desktop Only */}
             {userName && (
-              <div className="flex items-center gap-2 text-color-foreground-secondary bg-color-background-secondary px-3 py-2 rounded-lg">
-                <span className="text-lg" role="img" aria-label="User">👋</span>
-                <span className={`font-medium ${ageGroup === '7-10' ? 'text-base' : 'text-sm'}`}>
-                  Hi, {userName}!
-                </span>
+              <div className="hidden xl:flex items-center gap-2 px-3 py-2 bg-color-background-secondary rounded-lg text-color-foreground-secondary">
+                <span className="text-sm" role="img" aria-label="User">👋</span>
+                <span className="font-medium text-sm">Hi, {userName}!</span>
               </div>
             )}
             
-            {/* Theme Toggle - Temporarily Disabled */}
-            {/* <ThemeToggle size="md" ageGroup={ageGroup} /> */}
-            
-            {/* Accessibility Toggle */}
-            <button
-              onClick={onAccessibilityToggle}
-              className="w-10 h-10 bg-color-background-secondary border-2 border-color-primary text-color-primary rounded-xl hover:bg-color-primary hover:text-color-background hover:shadow-lg transition-all focus-ring flex items-center justify-center"
-              aria-label="Open accessibility settings"
-              title="Accessibility Settings"
-            >
-              <span className="text-lg" role="img" aria-label="Accessibility">♿</span>
-            </button>
+            {/* Action Buttons - Desktop */}
+            <div className="hidden lg:flex items-center gap-2">
+              <button
+                onClick={onAccessibilityToggle}
+                className="w-9 h-9 bg-color-background-secondary border border-color-background-accent text-color-primary rounded-lg hover:bg-color-primary hover:text-white hover:border-color-primary transition-all duration-200 focus-ring flex items-center justify-center"
+                aria-label="Open accessibility settings"
+                title="Accessibility Settings"
+              >
+                <span className="text-sm" role="img" aria-label="Accessibility">♿</span>
+              </button>
+              
+              <Link 
+                href="/parent" 
+                className="inline-flex items-center gap-2 px-3 py-2 bg-color-warning text-white rounded-lg hover:bg-orange-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
+                aria-label="Parent dashboard"
+              >
+                <span className="text-sm" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
+                Parents
+              </Link>
+            </div>
 
-            {/* Parent Dashboard Link */}
-            <Link 
-              href="/parent" 
-              className="touch-target bg-color-warning text-white rounded-xl hover:bg-orange-600 hover:shadow-lg transition-all focus-ring px-4 py-2"
-              aria-label="Parent dashboard"
-            >
-              <span className="mr-2" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
-              {ageGroup === '7-10' ? 'Parents' : 'Parent Dashboard'}
-            </Link>
-          </div>
-
-          {/* Mobile/Tablet Controls */}
-          <div className="flex lg:hidden items-center gap-2">
-            {/* Theme Toggle - Mobile - Temporarily Disabled */}
-            {/* <ThemeToggle size="sm" ageGroup={ageGroup} /> */}
-            
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMenu}
-              className="w-10 h-10 bg-color-primary text-white rounded-xl focus-ring flex items-center justify-center hover:bg-blue-600 transition-colors"
+              className="lg:hidden w-9 h-9 bg-color-primary text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 focus-ring flex items-center justify-center"
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
             >
-              <span className="text-lg transition-transform duration-200" role="img" aria-label="Menu">
+              <span className="text-base transition-transform duration-200" role="img" aria-label="Menu">
                 {isMenuOpen ? '✕' : '☰'}
               </span>
             </button>
@@ -121,52 +116,55 @@ export default function Header({ ageGroup = '7-10', userName, onAccessibilityTog
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <nav 
-            id="mobile-menu"
-            className="lg:hidden mt-4 pb-4 border-t-2 border-color-background-accent animate-in slide-in-from-top duration-200"
-            aria-label="Mobile navigation"
-          >
-            <div className="flex flex-col gap-3 pt-4">
-              {/* User Greeting - Mobile */}
-              {userName && (
-                <div className="text-center py-3 bg-color-background-secondary rounded-lg text-color-foreground-secondary">
-                  <span className="text-lg" role="img" aria-label="User">👋</span>
-                  <span className="ml-2 font-medium">Hi, {userName}!</span>
-                </div>
-              )}
+        <div 
+          id="mobile-menu"
+          className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+          aria-label="Mobile navigation"
+        >
+          <div className="py-4 border-t border-color-background-accent">
+            
+            {/* User Greeting - Mobile */}
+            {userName && (
+              <div className="flex items-center justify-center gap-2 py-3 mb-4 bg-color-background-secondary rounded-lg mx-2 text-color-foreground-secondary">
+                <span className="text-base" role="img" aria-label="User">👋</span>
+                <span className="font-medium">Hi, {userName}!</span>
+              </div>
+            )}
 
-              {/* Navigation Links */}
+            {/* Navigation Links - Mobile */}
+            <div className="grid grid-cols-1 gap-2 px-2">
               <Link 
                 href="/create" 
-                className="touch-target bg-color-secondary text-white rounded-xl hover:bg-green-600 transition-all focus-ring text-center py-3 shadow-md"
+                className="flex items-center justify-center gap-3 py-3 bg-color-secondary text-white rounded-lg hover:bg-green-600 transition-all duration-200 focus-ring font-medium shadow-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className="mr-2" role="img" aria-label="Create">✨</span>
+                <span className="text-lg" role="img" aria-label="Create">✨</span>
                 Create Story
               </Link>
               <Link 
                 href="/read" 
-                className="touch-target bg-color-accent text-white rounded-xl hover:bg-orange-600 transition-all focus-ring text-center py-3 shadow-md"
+                className="flex items-center justify-center gap-3 py-3 bg-color-accent text-white rounded-lg hover:bg-orange-600 transition-all duration-200 focus-ring font-medium shadow-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className="mr-2" role="img" aria-label="Read">📖</span>
+                <span className="text-lg" role="img" aria-label="Read">📖</span>
                 Read Stories
               </Link>
               <Link 
                 href="/characters" 
-                className="touch-target bg-color-fun text-white rounded-xl hover:bg-purple-600 transition-all focus-ring text-center py-3 shadow-md"
+                className="flex items-center justify-center gap-3 py-3 bg-color-fun text-white rounded-lg hover:bg-purple-600 transition-all duration-200 focus-ring font-medium shadow-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className="mr-2" role="img" aria-label="Character">👤</span>
+                <span className="text-lg" role="img" aria-label="Character">👤</span>
                 Characters
               </Link>
               <Link 
                 href="/parent" 
-                className="touch-target bg-color-warning text-white rounded-xl hover:bg-orange-600 transition-all focus-ring text-center py-3 shadow-md"
+                className="flex items-center justify-center gap-3 py-3 bg-color-warning text-white rounded-lg hover:bg-orange-600 transition-all duration-200 focus-ring font-medium shadow-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <span className="mr-2" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
+                <span className="text-lg" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
                 Parent Dashboard
               </Link>
               
@@ -176,15 +174,15 @@ export default function Header({ ageGroup = '7-10', userName, onAccessibilityTog
                   onAccessibilityToggle?.();
                   setIsMenuOpen(false);
                 }}
-                className="touch-target bg-color-background-secondary border-2 border-color-primary text-color-primary rounded-xl hover:bg-color-primary hover:text-color-background transition-all focus-ring text-center py-3"
+                className="flex items-center justify-center gap-3 py-3 bg-color-background-secondary border border-color-background-accent text-color-primary rounded-lg hover:bg-color-primary hover:text-white hover:border-color-primary transition-all duration-200 focus-ring font-medium"
                 aria-label="Open accessibility settings"
               >
-                <span className="mr-2" role="img" aria-label="Accessibility">♿</span>
+                <span className="text-lg" role="img" aria-label="Accessibility">♿</span>
                 Accessibility Settings
               </button>
             </div>
-          </nav>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* Skip Link for Accessibility */}
