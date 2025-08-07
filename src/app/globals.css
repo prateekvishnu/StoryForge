@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=OpenDyslexic&display=swap');
+@import "../styles/responsive.css";
+@import "../styles/accessibility.css";
+
+:root {
+  /* Child-Friendly Color Palette */
+  --primary-blue: #4A90E2;
+  --primary-green: #7ED321;
+  --primary-orange: #F5A623;
+  --primary-purple: #9013FE;
+  --primary-pink: #FF6B9D;
+  --primary-yellow: #FFD93D;
+  
+  /* Age-Appropriate Backgrounds */
+  --bg-primary: #FEFEFE;
+  --bg-secondary: #F8F9FF;
+  --bg-accent: #E8F4FD;
+  
+  /* Text Colors */
+  --text-primary: #2C3E50;
+  --text-secondary: #5D6D7E;
+  --text-light: #85929E;
+  
+  /* Safety Colors */
+  --safe-green: #27AE60;
+  --warning-orange: #E67E22;
+  --danger-red: #E74C3C;
+  
+  /* Button Colors */
+  --btn-primary: var(--primary-blue);
+  --btn-success: var(--primary-green);
+  --btn-warning: var(--primary-orange);
+  --btn-fun: var(--primary-purple);
+}
+
+@theme inline {
+  /* Child-Friendly Color System */
+  --color-primary: var(--primary-blue);
+  --color-secondary: var(--primary-green);
+  --color-accent: var(--primary-orange);
+  --color-fun: var(--primary-purple);
+  --color-pink: var(--primary-pink);
+  --color-yellow: var(--primary-yellow);
+  
+  /* Background Colors */
+  --color-background: var(--bg-primary);
+  --color-background-secondary: var(--bg-secondary);
+  --color-background-accent: var(--bg-accent);
+  
+  /* Text Colors */
+  --color-foreground: var(--text-primary);
+  --color-foreground-secondary: var(--text-secondary);
+  --color-foreground-light: var(--text-light);
+  
+  /* Status Colors */
+  --color-success: var(--safe-green);
+  --color-warning: var(--warning-orange);
+  --color-danger: var(--danger-red);
+  
+  /* Child-Friendly Fonts */
+  --font-primary: 'Comic Neue', cursive;
+  --font-dyslexic: 'OpenDyslexic', sans-serif;
+  --font-readable: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Disable dark mode for child safety and consistency */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Keep light theme for children */
+    --background: var(--bg-primary);
+    --foreground: var(--text-primary);
+  }
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Child-Friendly Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Large, touch-friendly interactive elements */
+button, .btn {
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Accessibility improvements */
+.dyslexic-font {
+  font-family: var(--font-dyslexic) !important;
+}
+
+.large-text {
+  font-size: 1.25rem;
+  line-height: 1.8;
+}
+
+.high-contrast {
+  --color-foreground: #000000;
+  --color-background: #FFFFFF;
+}
+
+/* Focus indicators for keyboard navigation */
+*:focus {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Child-safe link styling */
+a {
+  color: var(--primary-blue);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--primary-purple);
+  text-decoration: none;
+}
