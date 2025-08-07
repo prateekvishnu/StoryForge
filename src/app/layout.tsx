@@ -1,28 +1,36 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Comic_Neue } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const comicNeue = Comic_Neue({
-  weight: ['300', '400', '700'],
   subsets: ["latin"],
+  weight: ["300", "400", "700"],
   variable: "--font-comic-neue",
-  display: 'swap',
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
 
 export const metadata: Metadata = {
   title: "StoryForge - Interactive Adventure Creator",
-  description: "AI-powered interactive storytelling platform for children ages 7-16. Create, share, and experience amazing choose-your-own-adventure stories with child-safe AI assistance.",
-  keywords: "children stories, interactive fiction, AI storytelling, kids creativity, safe AI, COPPA compliant",
+  description: "AI-powered storytelling platform for young creators ages 7-16",
+  keywords: ["storytelling", "children", "AI", "interactive", "adventure", "creativity"],
   authors: [{ name: "StoryForge Team" }],
-
-  robots: "index, follow",
+  creator: "StoryForge",
+  publisher: "StoryForge",
   openGraph: {
     title: "StoryForge - Interactive Adventure Creator",
     description: "AI-powered storytelling platform for young creators",
+    url: "https://storyforge.app",
+    siteName: "StoryForge",
     type: "website",
-    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
@@ -33,9 +41,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" className="age-7-10">
       <body className={`${comicNeue.variable} min-h-screen flex flex-col bg-background text-foreground`}>

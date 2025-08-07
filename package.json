@@ -8,7 +8,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:init": "node scripts/init-database.js",
+    "db:test": "node scripts/test-database.js"
   },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.13",
