@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Comic_Neue } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { ThemeProvider, ThemeScript } from "@/contexts/ThemeContext";
+import ClientLayout from "./ClientLayout";
 
 const comicNeue = Comic_Neue({
   subsets: ["latin"],
@@ -45,13 +45,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="age-7-10">
-      <body className={`${comicNeue.variable} min-h-screen flex flex-col bg-background text-foreground`}>
-        <Header ageGroup="7-10" />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer ageGroup="7-10" />
+    <html lang="en" className="age-7-10" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className={`${comicNeue.variable} min-h-screen flex flex-col bg-color-background text-color-foreground`}>
+        <ThemeProvider defaultTheme="system">
+          <ClientLayout>
+            {children}
+          </ClientLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
