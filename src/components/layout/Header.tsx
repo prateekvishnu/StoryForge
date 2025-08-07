@@ -1,194 +1,200 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Container,
+  Avatar,
+  Chip,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  AutoStories as CreateIcon,
+  MenuBook as ReadIcon,
+  Person as PersonIcon,
+  SupervisorAccount as ParentIcon,
+} from '@mui/icons-material';
 import Link from 'next/link';
-// import ThemeToggle from '@/components/ui/ThemeToggle';
 
 interface HeaderProps {
-  ageGroup?: '7-10' | '11-16';
   userName?: string;
-  onAccessibilityToggle?: () => void;
 }
 
-export default function Header({ ageGroup = '7-10', userName, onAccessibilityToggle }: HeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Header({ userName }: HeaderProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
+  const navigationItems = [
+    { text: 'Create Story', href: '/create', icon: <CreateIcon /> },
+    { text: 'Read Stories', href: '/read', icon: <ReadIcon /> },
+    { text: 'Characters', href: '/characters', icon: <PersonIcon /> },
+    { text: 'Parents', href: '/parent', icon: <ParentIcon /> },
+  ];
+
+  const drawer = (
+    <Box sx={{ width: 250 }}>
+      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6">Menu</Typography>
+        <IconButton onClick={handleDrawerToggle}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      {userName && (
+        <Box sx={{ px: 2, pb: 2 }}>
+          <Chip 
+            avatar={<Avatar sx={{ bgcolor: 'primary.main' }}>👋</Avatar>}
+            label={`Hi, ${userName}!`}
+            variant="outlined"
+            sx={{ width: '100%' }}
+          />
+        </Box>
+      )}
+      <List>
+        {navigationItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton 
+              component={Link} 
+              href={item.href}
+              onClick={handleDrawerToggle}
+            >
+              <Box sx={{ mr: 2 }}>{item.icon}</Box>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
-    <header className="bg-color-background/95 backdrop-blur-sm border-b border-color-background-accent sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
-          
-          {/* Logo Section - Left Aligned */}
-          <div className="flex items-center flex-shrink-0">
-            <Link 
-              href="/" 
-              className="flex items-center gap-3 text-color-primary hover:text-color-fun transition-colors duration-200 focus-ring rounded-lg p-2 -ml-2"
-              aria-label="StoryForge Home"
-            >
-              <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-color-primary to-color-fun rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-lg lg:text-xl" role="img" aria-label="Story book">📚</span>
-              </div>
-              <span className="font-bold text-lg lg:text-xl text-color-primary tracking-tight">
-                StoryForge
-              </span>
+    <AppBar position="sticky" elevation={1}>
+      <Container maxWidth="lg">
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.2rem',
+                  }}
+                >
+                  📚
+                </Box>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ fontWeight: 700, letterSpacing: '-0.025em' }}
+                >
+                  StoryForge
+                </Typography>
+              </Box>
             </Link>
-          </div>
+          </Box>
 
-          {/* Main Navigation - Center */}
-          <nav className="hidden lg:flex items-center justify-center flex-1 max-w-md mx-8" aria-label="Main navigation">
-            <div className="flex items-center gap-2">
-              <Link 
-                href="/create" 
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-secondary text-white rounded-lg hover:bg-green-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
-                aria-label="Create new story"
-              >
-                <span className="text-base" role="img" aria-label="Create">✨</span>
-                Create
-              </Link>
-              <Link 
-                href="/read" 
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-accent text-white rounded-lg hover:bg-orange-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
-                aria-label="Read stories"
-              >
-                <span className="text-base" role="img" aria-label="Read">📖</span>
-                Read
-              </Link>
-              <Link 
-                href="/characters" 
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-color-fun text-white rounded-lg hover:bg-purple-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
-                aria-label="Character builder"
-              >
-                <span className="text-base" role="img" aria-label="Character">👤</span>
-                Characters
-              </Link>
-            </div>
-          </nav>
-
-          {/* User Actions - Right Aligned */}
-          <div className="flex items-center gap-3">
-            
-            {/* User Greeting - Desktop Only */}
-            {userName && (
-              <div className="hidden xl:flex items-center gap-2 px-3 py-2 bg-color-background-secondary rounded-lg text-color-foreground-secondary">
-                <span className="text-sm" role="img" aria-label="User">👋</span>
-                <span className="font-medium text-sm">Hi, {userName}!</span>
-              </div>
-            )}
-            
-            {/* Action Buttons - Desktop */}
-            <div className="hidden lg:flex items-center gap-2">
-              <button
-                onClick={onAccessibilityToggle}
-                className="w-9 h-9 bg-color-background-secondary border border-color-background-accent text-color-primary rounded-lg hover:bg-color-primary hover:text-white hover:border-color-primary transition-all duration-200 focus-ring flex items-center justify-center"
-                aria-label="Open accessibility settings"
-                title="Accessibility Settings"
-              >
-                <span className="text-sm" role="img" aria-label="Accessibility">♿</span>
-              </button>
-              
-              <Link 
-                href="/parent" 
-                className="inline-flex items-center gap-2 px-3 py-2 bg-color-warning text-white rounded-lg hover:bg-orange-600 hover:shadow-md transition-all duration-200 focus-ring font-medium text-sm"
-                aria-label="Parent dashboard"
-              >
-                <span className="text-sm" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
-                Parents
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="lg:hidden w-9 h-9 bg-color-primary text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 focus-ring flex items-center justify-center"
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
+          {/* Desktop Navigation */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+            <Button
+              component={Link}
+              href="/create"
+              variant="contained"
+              color="secondary"
+              startIcon={<CreateIcon />}
+              sx={{ minWidth: 120 }}
             >
-              <span className="text-base transition-transform duration-200" role="img" aria-label="Menu">
-                {isMenuOpen ? '✕' : '☰'}
-              </span>
-            </button>
-          </div>
-        </div>
+              Create
+            </Button>
+            <Button
+              component={Link}
+              href="/read"
+              variant="contained"
+              sx={{ 
+                minWidth: 120,
+                bgcolor: '#f59e0b',
+                '&:hover': { bgcolor: '#d97706' }
+              }}
+              startIcon={<ReadIcon />}
+            >
+              Read
+            </Button>
+            <Button
+              component={Link}
+              href="/characters"
+              variant="contained"
+              sx={{ 
+                minWidth: 120,
+                bgcolor: '#8b5cf6',
+                '&:hover': { bgcolor: '#7c3aed' }
+              }}
+              startIcon={<PersonIcon />}
+            >
+              Characters
+            </Button>
+          </Box>
 
-        {/* Mobile Menu */}
-        <div 
-          id="mobile-menu"
-          className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-          aria-label="Mobile navigation"
-        >
-          <div className="py-4 border-t border-color-background-accent">
-            
-            {/* User Greeting - Mobile */}
+          {/* User Actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {userName && (
-              <div className="flex items-center justify-center gap-2 py-3 mb-4 bg-color-background-secondary rounded-lg mx-2 text-color-foreground-secondary">
-                <span className="text-base" role="img" aria-label="User">👋</span>
-                <span className="font-medium">Hi, {userName}!</span>
-              </div>
+              <Chip 
+                avatar={<Avatar sx={{ bgcolor: 'primary.main' }}>👋</Avatar>}
+                label={`Hi, ${userName}!`}
+                variant="outlined"
+                sx={{ display: { xs: 'none', lg: 'flex' } }}
+              />
             )}
+            
+            <Button
+              component={Link}
+              href="/parent"
+              variant="outlined"
+              color="warning"
+              startIcon={<ParentIcon />}
+              sx={{ display: { xs: 'none', md: 'flex' } }}
+            >
+              Parents
+            </Button>
 
-            {/* Navigation Links - Mobile */}
-            <div className="grid grid-cols-1 gap-2 px-2">
-              <Link 
-                href="/create" 
-                className="flex items-center justify-center gap-3 py-3 bg-color-secondary text-white rounded-lg hover:bg-green-600 transition-all duration-200 focus-ring font-medium shadow-sm"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className="text-lg" role="img" aria-label="Create">✨</span>
-                Create Story
-              </Link>
-              <Link 
-                href="/read" 
-                className="flex items-center justify-center gap-3 py-3 bg-color-accent text-white rounded-lg hover:bg-orange-600 transition-all duration-200 focus-ring font-medium shadow-sm"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className="text-lg" role="img" aria-label="Read">📖</span>
-                Read Stories
-              </Link>
-              <Link 
-                href="/characters" 
-                className="flex items-center justify-center gap-3 py-3 bg-color-fun text-white rounded-lg hover:bg-purple-600 transition-all duration-200 focus-ring font-medium shadow-sm"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className="text-lg" role="img" aria-label="Character">👤</span>
-                Characters
-              </Link>
-              <Link 
-                href="/parent" 
-                className="flex items-center justify-center gap-3 py-3 bg-color-warning text-white rounded-lg hover:bg-orange-600 transition-all duration-200 focus-ring font-medium shadow-sm"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className="text-lg" role="img" aria-label="Parent">👨‍👩‍👧‍👦</span>
-                Parent Dashboard
-              </Link>
-              
-              {/* Accessibility Button - Mobile */}
-              <button
-                onClick={() => {
-                  onAccessibilityToggle?.();
-                  setIsMenuOpen(false);
-                }}
-                className="flex items-center justify-center gap-3 py-3 bg-color-background-secondary border border-color-background-accent text-color-primary rounded-lg hover:bg-color-primary hover:text-white hover:border-color-primary transition-all duration-200 focus-ring font-medium"
-                aria-label="Open accessibility settings"
-              >
-                <span className="text-lg" role="img" aria-label="Accessibility">♿</span>
-                Accessibility Settings
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+            {/* Mobile menu button */}
+            <IconButton
+              onClick={handleDrawerToggle}
+              sx={{ display: { md: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </Container>
 
-      {/* Skip Link for Accessibility */}
-      <Link href="#main-content" className="skip-link">
-        Skip to main content
-      </Link>
-    </header>
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+      >
+        {drawer}
+      </Drawer>
+    </AppBar>
   );
 }
