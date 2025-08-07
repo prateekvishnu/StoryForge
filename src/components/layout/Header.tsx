@@ -151,6 +151,19 @@ export default function Header({ userName }: HeaderProps) {
             >
               Characters
             </Button>
+            <Button
+              component={Link}
+              href="/story-planner"
+              variant="contained"
+              sx={{ 
+                minWidth: 120,
+                bgcolor: '#06b6d4',
+                '&:hover': { bgcolor: '#0891b2' }
+              }}
+              startIcon={<CreateIcon />}
+            >
+              Story Planner
+            </Button>
           </Box>
 
           {/* User Actions */}
