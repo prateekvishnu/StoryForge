@@ -9,7 +9,7 @@
         "testStrategy": "1. Verify project builds without errors\n2. Test responsive design on various screen sizes\n3. Validate accessibility using automated tools (Lighthouse, axe)\n4. Ensure UI components render correctly with child-friendly styling\n5. Verify dyslexia-friendly font options work correctly",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -17,7 +17,7 @@
             "description": "Create a new Next.js project with TypeScript and set up the basic project structure with necessary directories.",
             "dependencies": [],
             "details": "Run 'npx create-next-app@latest storyforge --typescript' to initialize the project. Create directories for components, pages, styles, utils, and API routes. Install core dependencies including React, Next.js, and TypeScript. Configure ESLint and Prettier for code quality.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify project builds without errors. Ensure all directories are properly created. Check that TypeScript configuration is working correctly. Validate ESLint and Prettier configurations."
           },
           {
@@ -26,7 +26,7 @@
             "description": "Configure Tailwind CSS with a custom theme featuring bright colors, readable fonts, and child-friendly UI elements.",
             "dependencies": [],
             "details": "Install and configure Tailwind CSS. Create a custom color palette with bright, engaging colors suitable for children. Set up typography with readable, dyslexia-friendly font options. Define custom component styles for buttons, cards, and other UI elements with larger sizes and rounded corners.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify Tailwind CSS is properly configured. Test that custom theme colors render correctly. Ensure dyslexia-friendly fonts are working. Check that UI components match the child-friendly design specifications."
           },
           {
@@ -35,7 +35,7 @@
             "description": "Set up responsive design breakpoints and layouts to ensure the application works well on various devices used by children.",
             "dependencies": [],
             "details": "Configure responsive breakpoints in Tailwind for different device sizes (mobile, tablet, desktop). Create responsive layout components that adapt to screen sizes. Implement touch-friendly interfaces for mobile and tablet users. Ensure text and UI elements scale appropriately across devices.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test responsive layouts on various screen sizes and devices. Verify touch interactions work properly on mobile devices. Ensure content remains readable and accessible at all breakpoints. Use browser dev tools to simulate different device sizes."
           },
           {
@@ -44,7 +44,7 @@
             "description": "Implement accessibility features specifically designed for children of different ages and abilities.",
             "dependencies": [],
             "details": "Add proper ARIA attributes to all interactive elements. Implement keyboard navigation for all features. Create high contrast mode option. Add text-to-speech capabilities for younger readers. Ensure color combinations meet WCAG standards. Implement focus indicators that are clear and engaging for children.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run automated accessibility tests using Lighthouse and axe. Test keyboard navigation throughout the application. Verify text-to-speech functionality works correctly. Test with screen readers to ensure compatibility. Conduct manual accessibility review."
           },
           {
@@ -53,7 +53,7 @@
             "description": "Develop reusable layout components with child-friendly UI elements that will serve as the foundation for the application.",
             "dependencies": [],
             "details": "Create a main Layout component with header, footer, and navigation. Develop child-friendly UI components including large buttons, colorful cards, and engaging icons. Implement a navigation system with visual cues appropriate for children. Create form components with simplified inputs and clear validation messages. Add animation components that enhance engagement without being distracting.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test all components in isolation using component testing tools. Verify components render correctly at all breakpoints. Test component interactions and state changes. Ensure animations work properly and don't cause performance issues. Validate accessibility of all components."
           }
         ]
@@ -68,15 +68,15 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
             "title": "Set up SQLite database environment",
             "description": "Install necessary SQLite packages and create the database connection utility",
             "dependencies": [],
-            "details": "Install required packages (sqlite, sqlite3, better-sqlite3), create a database configuration file, implement the database connection utility with proper error handling, and set up connection pooling for performance optimization.",
-            "status": "pending",
+            "details": "Install required packages (sqlite, sqlite3, better-sqlite3), create a database configuration file, implement the database connection utility with proper error handling, and set up connection pooling for performance optimization.\n<info added on 2025-08-07T19:51:34.163Z>\n✅ Successfully completed SQLite environment setup:\n\n**Packages Installed:**\n- `better-sqlite3`: Main SQLite driver with excellent performance\n- `sqlite3`: Additional SQLite support \n- `sqlite`: SQLite utilities\n- `@types/sqlite3`: TypeScript definitions\n\n**Configuration Created:**\n- `src/lib/database/config.ts`: Database configuration with environment-specific settings\n- `src/lib/database/connection.ts`: Singleton database connection class with retry logic, connection pooling, and transaction support\n- `src/types/database.ts`: Comprehensive TypeScript interfaces for all database entities\n\n**Key Features Implemented:**\n- Environment-specific database files (dev, test, production)\n- Connection retry logic with exponential backoff\n- WAL mode for better concurrency\n- Foreign key constraints enabled\n- Proper error handling and logging\n- Transaction support with retry mechanism\n- Singleton pattern for connection management\n\nThe database environment is now ready for schema implementation.\n</info added on 2025-08-07T19:51:34.163Z>",
+            "status": "done",
             "testStrategy": "Test database connection establishment, verify connection pooling works under load, and ensure proper error handling when connection fails."
           },
           {
@@ -86,8 +86,8 @@
             "dependencies": [
               "2.1"
             ],
-            "details": "Create SQL scripts for all required tables (Users, Stories, StorySegments, Characters, ParentalApprovals), define appropriate relationships between tables, set up indexes for performance, and implement constraints for data integrity.",
-            "status": "pending",
+            "details": "Create SQL scripts for all required tables (Users, Stories, StorySegments, Characters, ParentalApprovals), define appropriate relationships between tables, set up indexes for performance, and implement constraints for data integrity.\n<info added on 2025-08-07T20:13:36.669Z>\n✅ Successfully completed database schema design and implementation:\n\n**Schema Created:**\n- `src/lib/database/schema.sql`: Complete SQL schema with 8 tables\n  - `users`: User information with COPPA compliance\n  - `stories`: Story metadata and publishing status\n  - `story_segments`: Individual story parts with branching support\n  - `story_choices`: Interactive decision points\n  - `characters`: Character information with JSON attributes\n  - `parental_approvals`: COPPA compliance and moderation\n  - `reading_progress`: User reading tracking\n  - `story_ratings`: Age-appropriate rating system\n\n**Schema Features:**\n- Foreign key constraints with proper cascading\n- Comprehensive indexing for performance\n- Automatic timestamp triggers\n- Age group validation (7-10, 11-16)\n- COPPA-compliant minimal data collection\n- Support for branching narratives\n- Character reusability across stories\n\n**Implementation Modules:**\n- `src/lib/database/schema.ts`: Schema management class\n- `src/lib/database/init.ts`: Database initialization utilities\n- `src/lib/database/index.ts`: Module exports\n- `src/app/api/test-db/route.ts`: API testing endpoint\n\n**Database Configuration:**\n- Environment-specific database files\n- WAL mode for better concurrency\n- Proper foreign key enforcement\n- Performance optimizations (caching, indexing)\n</info added on 2025-08-07T20:13:36.669Z>",
+            "status": "done",
             "testStrategy": "Verify all tables are created with correct columns and relationships, test constraints with invalid data, and ensure indexes improve query performance."
           },
           {
@@ -98,8 +98,8 @@
               "2.1",
               "2.2"
             ],
-            "details": "Create repository classes for each entity (UserRepository, StoryRepository, etc.), implement standard CRUD operations (create, read, update, delete), add specialized queries needed for the application, and ensure proper transaction management.",
-            "status": "pending",
+            "details": "Create repository classes for each entity (UserRepository, StoryRepository, etc.), implement standard CRUD operations (create, read, update, delete), add specialized queries needed for the application, and ensure proper transaction management.\n<info added on 2025-08-07T20:20:06.096Z>\n✅ Successfully completed data access layer implementation:\n\n**Repository Classes Created:**\n- `src/lib/database/repositories/base.ts`: Base repository with common CRUD operations, pagination, error handling, and transaction support\n- `src/lib/database/repositories/user.ts`: User repository with COPPA compliance validation\n- `src/lib/database/repositories/story.ts`: Story repository with filtering, publishing, and related data management\n- `src/lib/database/repositories/character.ts`: Character repository with JSON attribute handling, templates, and validation\n- `src/lib/database/repositories/index.ts`: Repository exports\n\n**Key Features Implemented:**\n- Generic base repository with TypeScript generics\n- Comprehensive error handling and logging\n- Pagination support with metadata\n- Transaction support with retry mechanisms\n- COPPA compliance validation for users\n- JSON attribute parsing for characters\n- Content filtering and safety validation\n- Database statistics and health checks\n- Template and reusability support for characters\n\n**API Integration:**\n- `src/app/api/test-db/route.ts`: Next.js API route for testing database functionality\n\n**TypeScript Compliance:**\n- Fixed all TypeScript/ESLint errors\n- Proper type definitions throughout\n- Generic type support for flexibility\n\nThe data access layer is complete and ready for validation and testing.\n</info added on 2025-08-07T20:20:06.096Z>",
+            "status": "done",
             "testStrategy": "Unit test all CRUD operations with sample data, verify transactions work correctly, and test edge cases like concurrent access."
           },
           {
@@ -110,7 +110,7 @@
               "2.3"
             ],
             "details": "Develop validation rules for each entity type, implement age-appropriate content filtering for stories and characters, create validation middleware for API endpoints, and add sanitization for user inputs.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test validation with valid and invalid data samples, verify age-appropriate filtering works correctly, and ensure validation errors are properly reported."
           },
           {
@@ -123,78 +123,8 @@
               "2.4"
             ],
             "details": "Set up a migration framework for future schema updates, create initial migration scripts, implement detailed logging for all database operations, add performance monitoring, and create database backup procedures.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test migration process with schema changes, verify logs capture all relevant database operations, and ensure backup procedures work correctly."
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "Develop User Authentication and Parental Controls",
-        "description": "Implement a COPPA-compliant authentication system with parental controls, account approval, and monitoring systems for child safety.",
-        "details": "1. Create user registration flow with age verification\n2. Implement parent/guardian account creation\n3. Develop child account linking to parent accounts\n4. Create parental approval system for child account activities\n5. Implement secure authentication using JWT tokens\n6. Store minimal user data in compliance with COPPA\n7. Create parent dashboard for monitoring child activity\n8. Implement age-appropriate content filters based on user age\n9. Add parental controls for content restrictions\n10. Create account settings page with privacy options\n11. Implement session management with appropriate timeouts\n12. Add email verification for parent accounts\n13. Create password reset functionality for parent accounts only",
-        "testStrategy": "1. Test user registration flow for both parent and child accounts\n2. Verify parental approval system works correctly\n3. Test authentication with valid and invalid credentials\n4. Verify COPPA compliance with minimal data collection\n5. Test parent dashboard functionality\n6. Verify content filtering based on age groups\n7. Test account settings and privacy options",
-        "priority": "high",
-        "dependencies": [
-          1,
-          2
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Implement User Registration and Authentication System",
-            "description": "Create a COPPA-compliant user registration flow with age verification, parent/guardian accounts, and secure JWT authentication.",
-            "dependencies": [],
-            "details": "Develop registration forms with age verification gates, implement parent/guardian account creation with email verification, create child account linking to parent accounts, and implement secure authentication using JWT tokens with appropriate session management and timeouts. Store minimal user data in compliance with COPPA regulations.",
-            "status": "pending",
-            "testStrategy": "Test registration flows for both parent and child accounts, verify email verification process, test authentication with valid and invalid credentials, verify session management and timeouts work correctly, and validate COPPA compliance with minimal data collection."
-          },
-          {
-            "id": 2,
-            "title": "Develop Parental Approval System",
-            "description": "Create a comprehensive system for parental approval of child account activities and content access.",
-            "dependencies": [
-              "3.1"
-            ],
-            "details": "Implement a notification system for parental approvals, create approval workflows for child account activities (e.g., publishing stories, accessing certain features), develop approval request queues for parents, and implement approval history tracking for audit purposes.",
-            "status": "pending",
-            "testStrategy": "Test approval workflows with various scenarios, verify notification delivery to parent accounts, test approval/rejection processes, verify child accounts cannot bypass approval requirements, and test the approval history tracking system."
-          },
-          {
-            "id": 3,
-            "title": "Create Parent Dashboard for Monitoring",
-            "description": "Develop a comprehensive dashboard for parents to monitor child activity, manage settings, and review content.",
-            "dependencies": [
-              "3.1",
-              "3.2"
-            ],
-            "details": "Design and implement a parent dashboard interface with activity monitoring features (stories created/read, time spent, interactions), content review tools, usage reports and statistics, and multiple child account management capabilities.",
-            "status": "pending",
-            "testStrategy": "Test dashboard with multiple child accounts, verify activity monitoring accurately tracks usage, test content review functionality, verify statistics and reports display correctly, and conduct usability testing with parents."
-          },
-          {
-            "id": 4,
-            "title": "Implement Content Filtering and Restrictions",
-            "description": "Create age-appropriate content filters and parental control mechanisms for content restrictions.",
-            "dependencies": [
-              "3.1",
-              "3.2"
-            ],
-            "details": "Develop content classification system based on age appropriateness, implement filtering mechanisms to display age-appropriate content, create parental controls for content restriction settings, and develop override mechanisms requiring parental approval for accessing restricted content.",
-            "status": "pending",
-            "testStrategy": "Test content filtering with various age settings, verify restricted content is properly hidden from child accounts, test parental override functionality, and validate that filter settings persist across sessions."
-          },
-          {
-            "id": 5,
-            "title": "Develop Account Settings and Privacy Controls",
-            "description": "Create comprehensive account settings with privacy options and password management for both parent and child accounts.",
-            "dependencies": [
-              "3.1"
-            ],
-            "details": "Implement account settings pages with privacy options, create password reset functionality for parent accounts only, develop profile management features with minimal data collection, implement account deletion processes compliant with COPPA, and create data export functionality for parents.",
-            "status": "pending",
-            "testStrategy": "Test all account settings functionality, verify password reset works for parent accounts only, test privacy settings are correctly applied, verify account deletion process works correctly and removes all user data, and validate data export functionality provides complete user information."
           }
         ]
       },
@@ -206,8 +136,7 @@
         "testStrategy": "1. Test drag-and-drop functionality across different devices\n2. Verify character attributes are appropriate for different age groups\n3. Test character saving and loading\n4. Verify character validation prevents inappropriate content\n5. Test accessibility of the character builder\n6. Conduct usability testing with target age groups",
         "priority": "medium",
         "dependencies": [
-          1,
-          3
+          1
         ],
         "status": "pending",
         "subtasks": [
@@ -277,8 +206,7 @@
         "priority": "medium",
         "dependencies": [
           1,
-          2,
-          3
+          2
         ],
         "status": "pending",
         "subtasks": [
@@ -492,7 +420,6 @@
         "dependencies": [
           1,
           2,
-          3,
           5
         ],
         "status": "pending",
@@ -638,7 +565,6 @@
         "dependencies": [
           1,
           2,
-          3,
           5,
           8
         ],
@@ -711,7 +637,6 @@
         "dependencies": [
           1,
           2,
-          3,
           6,
           7
         ],
@@ -786,7 +711,6 @@
         "dependencies": [
           1,
           2,
-          3,
           10,
           11
         ],
@@ -859,7 +783,6 @@
         "dependencies": [
           1,
           2,
-          3,
           8
         ],
         "status": "pending",
@@ -931,7 +854,6 @@
         "priority": "medium",
         "dependencies": [
           1,
-          3,
           4,
           5,
           8
@@ -1006,7 +928,6 @@
         "dependencies": [
           1,
           2,
-          3,
           8,
           12
         ],
@@ -1071,11 +992,27 @@
             "testStrategy": "Test dashboard functionality across browsers and devices; verify accuracy of all displayed metrics; validate that parent/educator reports contain appropriate information; test A/B testing framework functionality; ensure dashboard performance under load; verify export functionality works correctly."
           }
         ]
+      },
+      {
+        "id": 16,
+        "title": "Fine-tune LLM for Children's Story Generation",
+        "description": "Fine-tune a language model specifically for children's story generation using curated datasets, ensuring age-appropriate, engaging content for different age groups (7-10, 11-16).",
+        "details": "1. Set up fine-tuning environment:\n   - Install necessary libraries: transformers, datasets, accelerate, torch\n   - Configure GPU acceleration if available\n   - Set up experiment tracking with Weights & Biases or TensorBoard\n\n2. Collect and prepare age-appropriate datasets:\n   - Create a `datasets` folder with the following structure:\n     ```\n     datasets/\n     ├── age_7_10/\n     │   ├── stories/\n     │   └── templates/\n     ├── age_11_16/\n     │   ├── stories/\n     │   └── templates/\n     └── safety_filters/\n     ```\n   - Curate children's literature from public domain sources (Project Gutenberg, Storynory)\n   - Collect age-appropriate story templates for different genres\n   - Create safety-filtered content guidelines and examples\n\n3. Preprocess training data:\n   - Clean and normalize text (remove irrelevant metadata, standardize formatting)\n   - Split stories into appropriate training chunks\n   - Create prompt-completion pairs for fine-tuning\n   - Apply content safety filtering to ensure child-appropriate material\n   - Create validation sets for quality assessment\n\n4. Select base model for fine-tuning:\n   - Choose a smaller model compatible with Ollama (Phi-3, Mistral 7B, or Llama 3 8B)\n   - Evaluate base model performance on story generation tasks\n   - Configure model parameters for fine-tuning (learning rate, epochs)\n\n5. Implement fine-tuning pipeline:\n   - Set up LoRA (Low-Rank Adaptation) or QLoRA for efficient fine-tuning\n   - Configure training parameters (batch size, gradient accumulation)\n   - Implement early stopping based on validation performance\n   - Set up checkpointing to save model progress\n\n6. Train model with age-specific datasets:\n   - Fine-tune separate model variants for each age group (7-10, 11-16)\n   - Monitor training metrics (loss, perplexity)\n   - Evaluate generation quality periodically during training\n   - Apply content safety reinforcement during training\n\n7. Evaluate fine-tuned models:\n   - Create evaluation prompts specific to children's stories\n   - Assess readability scores for different age groups\n   - Evaluate content safety and appropriateness\n   - Compare with base model performance\n\n8. Export and integrate with Ollama:\n   - Convert fine-tuned models to GGUF format for Ollama compatibility\n   - Create Modelfile with appropriate parameters and system prompts\n   - Test integration with the existing Ollama setup\n   - Document model capabilities and limitations\n\n9. Create API integration:\n   - Extend the existing Ollama integration to use the fine-tuned models\n   - Implement model selection based on age group\n   - Add specialized prompt templates for the fine-tuned models\n   - Implement fallback mechanisms if fine-tuned model fails\n\n10. Document the fine-tuning process:\n    - Create detailed documentation of the dataset curation process\n    - Document model training parameters and results\n    - Provide guidelines for future model updates and improvements",
+        "testStrategy": "1. Evaluate base model vs. fine-tuned model performance:\n   - Compare perplexity and loss metrics on held-out validation data\n   - Conduct human evaluation of story quality with educators or children's literature experts\n   - Measure improvements in age-appropriateness and engagement\n\n2. Test content safety and appropriateness:\n   - Create a test suite of prompts designed to probe safety boundaries\n   - Verify the model rejects inappropriate content generation\n   - Test with edge cases that might produce unsafe content\n   - Ensure content aligns with educational standards for target age groups\n\n3. Benchmark generation performance:\n   - Measure inference speed on target hardware\n   - Test memory usage during generation\n   - Evaluate token generation throughput\n   - Compare performance with original Ollama model\n\n4. Conduct age-appropriateness testing:\n   - Create a rubric for evaluating age-appropriateness of generated content\n   - Test with prompts targeting different reading levels\n   - Verify vocabulary and concept complexity matches target age groups\n   - Assess narrative structure appropriateness for different ages\n\n5. Integration testing with StoryForge platform:\n   - Test API integration with the Next.js application\n   - Verify proper model selection based on user age group\n   - Test error handling and fallback mechanisms\n   - Measure end-to-end latency for story generation\n\n6. Conduct A/B testing with users:\n   - Compare user engagement with base model vs. fine-tuned model stories\n   - Collect feedback on story quality and relevance\n   - Measure completion rates for stories from different models\n   - Analyze user preferences between models\n\n7. Validate against content guidelines:\n   - Check compliance with COPPA and other children's content regulations\n   - Verify absence of problematic themes or content\n   - Test with diverse prompts to ensure consistent safety\n   - Document any limitations or edge cases discovered",
+        "status": "pending",
+        "dependencies": [
+          1,
+          2,
+          6,
+          11
+        ],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-08-07T18:51:48.879Z",
-      "updated": "2025-08-07T18:51:48.879Z",
+      "updated": "2025-08-07T20:32:39.247Z",
       "description": "Tasks for master context"
     }
   }
