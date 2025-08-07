@@ -23,7 +23,6 @@ import {
   AutoStories as CreateIcon,
   MenuBook as ReadIcon,
   Person as PersonIcon,
-  SupervisorAccount as ParentIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
 
@@ -42,7 +41,6 @@ export default function Header({ userName }: HeaderProps) {
     { text: 'Create Story', href: '/create', icon: <CreateIcon /> },
     { text: 'Read Stories', href: '/read', icon: <ReadIcon /> },
     { text: 'Characters', href: '/characters', icon: <PersonIcon /> },
-    { text: 'Parents', href: '/parent', icon: <ParentIcon /> },
   ];
 
   const drawer = (
@@ -177,17 +175,6 @@ export default function Header({ userName }: HeaderProps) {
               />
             )}
             
-            <Button
-              component={Link}
-              href="/parent"
-              variant="outlined"
-              color="warning"
-              startIcon={<ParentIcon />}
-              sx={{ display: { xs: 'none', md: 'flex' } }}
-            >
-              Parents
-            </Button>
-
             {/* Mobile menu button */}
             <IconButton
               onClick={handleDrawerToggle}
