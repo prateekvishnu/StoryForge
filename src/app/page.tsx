@@ -3,7 +3,7 @@
 import Button from "@/components/child-friendly/Button";
 import { StoryCard } from "@/components/child-friendly/Card";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="container-child py-8">
       {/* Hero Section */}

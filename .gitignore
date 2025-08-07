@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Training datasets (for future model training)
+training-datasets/
+*.db
+*.sqlite
+*.sqlite3

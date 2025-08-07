@@ -1,25 +1,32 @@
 -- StoryForge Database Schema
 -- SQLite database schema for the interactive story platform
+-- COPPA compliant design for children ages 7-16
+
+-- Enable foreign key support
+PRAGMA foreign_keys = ON;
 
 -- Users table - stores basic user information (COPPA compliant)
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    age_group TEXT NOT NULL CHECK (age_group IN ('7-10', '11-16')),
-    parent_email TEXT,
+    username TEXT UNIQUE NOT NULL,
+    age_group TEXT NOT NULL CHECK (age_group IN ('7-10', '11-13', '14-16')),
+    parent_email TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE
 );
 
--- Stories table - stores story metadata
+-- Stories table - main story content
 CREATE TABLE IF NOT EXISTS stories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
+    description TEXT,
     author_id INTEGER NOT NULL,
-    age_group TEXT NOT NULL CHECK (age_group IN ('7-10', '11-16')),
+    age_group TEXT NOT NULL CHECK (age_group IN ('7-10', '11-13', '14-16')),
     template_type TEXT DEFAULT 'custom' CHECK (template_type IN ('adventure', 'mystery', 'fantasy', 'friendship', 'learning', 'custom')),
     status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'pending_approval', 'published', 'rejected')),
-    description TEXT,
+    content TEXT,
+    image_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
@@ -29,11 +36,12 @@ CREATE TABLE IF NOT EXISTS stories (
 CREATE TABLE IF NOT EXISTS story_segments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     story_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
     content TEXT NOT NULL,
-    image_url TEXT,
     position INTEGER NOT NULL DEFAULT 0,
     parent_segment_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE CASCADE,
     FOREIGN KEY (parent_segment_id) REFERENCES story_segments(id) ON DELETE CASCADE
 );
@@ -53,8 +61,9 @@ CREATE TABLE IF NOT EXISTS story_choices (
 -- Characters table - reusable characters for stories
 CREATE TABLE IF NOT EXISTS characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    story_id INTEGER,
     name TEXT NOT NULL,
+    description TEXT,
+    story_id INTEGER,
     attributes TEXT, -- JSON string with character attributes
     image_url TEXT,
     is_template BOOLEAN DEFAULT FALSE,
@@ -68,10 +77,10 @@ CREATE TABLE IF NOT EXISTS parental_approvals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     story_id INTEGER NOT NULL,
     parent_email TEXT NOT NULL,
-    approved BOOLEAN DEFAULT FALSE,
-    approval_date DATETIME,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE CASCADE
 );
 
@@ -81,9 +90,8 @@ CREATE TABLE IF NOT EXISTS reading_progress (
     user_id INTEGER NOT NULL,
     story_id INTEGER NOT NULL,
     current_segment_id INTEGER,
-    completed BOOLEAN DEFAULT FALSE,
+    progress_percentage REAL DEFAULT 0.0,
     last_read DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE CASCADE,
     FOREIGN KEY (current_segment_id) REFERENCES story_segments(id) ON DELETE SET NULL,
@@ -95,26 +103,33 @@ CREATE TABLE IF NOT EXISTS story_ratings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     story_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (story_id) REFERENCES stories(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(story_id, user_id)
 );
 
--- Create indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_stories_author_id ON stories(author_id);
-CREATE INDEX IF NOT EXISTS idx_stories_age_group ON stories(age_group);
+-- Safety audit log - track all content for safety compliance
+CREATE TABLE IF NOT EXISTS safety_audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    content_type TEXT NOT NULL CHECK (content_type IN ('story', 'segment', 'choice', 'character')),
+    content_id INTEGER NOT NULL,
+    action TEXT NOT NULL CHECK (action IN ('create', 'update', 'delete', 'approve', 'reject')),
+    content_snapshot TEXT, -- JSON snapshot of content at time of action
+    safety_flags TEXT, -- JSON array of any safety concerns
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_stories_author ON stories(author_id);
 CREATE INDEX IF NOT EXISTS idx_stories_status ON stories(status);
-CREATE INDEX IF NOT EXISTS idx_story_segments_story_id ON story_segments(story_id);
-CREATE INDEX IF NOT EXISTS idx_story_segments_parent_id ON story_segments(parent_segment_id);
-CREATE INDEX IF NOT EXISTS idx_story_choices_segment_id ON story_choices(segment_id);
-CREATE INDEX IF NOT EXISTS idx_characters_story_id ON characters(story_id);
-CREATE INDEX IF NOT EXISTS idx_characters_is_template ON characters(is_template);
-CREATE INDEX IF NOT EXISTS idx_parental_approvals_story_id ON parental_approvals(story_id);
-CREATE INDEX IF NOT EXISTS idx_reading_progress_user_id ON reading_progress(user_id);
-CREATE INDEX IF NOT EXISTS idx_reading_progress_story_id ON reading_progress(story_id);
-CREATE INDEX IF NOT EXISTS idx_story_ratings_story_id ON story_ratings(story_id);
+CREATE INDEX IF NOT EXISTS idx_story_segments_story ON story_segments(story_id);
+CREATE INDEX IF NOT EXISTS idx_story_choices_segment ON story_choices(segment_id);
+CREATE INDEX IF NOT EXISTS idx_reading_progress_user ON reading_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_safety_audit_content ON safety_audit_log(content_type, content_id);
 
 -- Create triggers for automatic timestamp updates
 CREATE TRIGGER IF NOT EXISTS update_users_timestamp 
@@ -134,3 +149,15 @@ CREATE TRIGGER IF NOT EXISTS update_characters_timestamp
     BEGIN 
         UPDATE characters SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id; 
     END;
+
+CREATE TRIGGER IF NOT EXISTS update_story_segments_timestamp 
+    AFTER UPDATE ON story_segments 
+    BEGIN 
+        UPDATE story_segments SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id; 
+    END;
+
+CREATE TRIGGER IF NOT EXISTS update_parental_approvals_timestamp 
+    AFTER UPDATE ON parental_approvals 
+    BEGIN 
+        UPDATE parental_approvals SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id; 
+    END; 
