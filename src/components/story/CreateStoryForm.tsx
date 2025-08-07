@@ -96,6 +96,8 @@ export default function CreateStoryForm() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<StoryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [storyHistory, setStoryHistory] = useState<string[]>([]);
+  const [continuationLoading, setContinuationLoading] = useState(false);
 
   const handleInputChange = (field: keyof StoryRequest, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -150,6 +152,10 @@ export default function CreateStoryForm() {
 
       if (data.success) {
         setResult(data);
+        // Initialize story history for interactive stories
+        if (data.metadata?.isInteractive) {
+          setStoryHistory([data.story || '']);
+        }
       } else {
         setError(data.error || 'Failed to generate story');
       }
@@ -161,6 +167,63 @@ export default function CreateStoryForm() {
   };
 
   const wordLimitRange = getWordLimitRange();
+
+  // Handle choice selection for interactive stories
+  const handleChoiceSelect = async (choiceText: string, choiceIndex: number) => {
+    if (!result?.story) return;
+
+    setContinuationLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/stories/continue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          previousStory: storyHistory.join('\n\n'),
+          chosenOption: choiceText,
+          choiceIndex,
+          ageGroup: formData.ageGroup,
+          storyType: formData.storyType,
+          tone: formData.tone,
+          characters: formData.characters,
+          setting: formData.setting,
+          theme: formData.theme,
+          addMoreChoices: true, // Always add more choices for continued adventure
+          targetWordCount: 250, // 200-300 word segments
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update story history
+        const newStorySegment = `\n\n**You chose: ${choiceText}**\n\n${data.continuation}`;
+        const updatedHistory = [...storyHistory, newStorySegment];
+        setStoryHistory(updatedHistory);
+
+        // Update result with continuation
+        setResult(prev => ({
+          ...prev!,
+          story: updatedHistory.join(''),
+          choices: data.choices || [],
+          metadata: {
+            ...prev!.metadata!,
+            wordCount: (prev!.metadata!.wordCount || 0) + (data.metadata?.wordCount || 0),
+            estimatedReadingTime: Math.ceil(((prev!.metadata!.wordCount || 0) + (data.metadata?.wordCount || 0)) / 200),
+          },
+        }));
+      } else {
+        setError(data.error || 'Failed to continue story');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setContinuationLoading(false);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -448,16 +511,49 @@ export default function CreateStoryForm() {
                   <Box>
                     <Divider sx={{ mb: 2 }} />
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                      🎮 Your Choices:
+                      🎮 What do you choose?
                     </Typography>
-                    {result.choices.map((choice, index) => (
-                      <Chip
-                        key={index}
-                        label={choice.text}
-                        variant="outlined"
-                        sx={{ mr: 1, mb: 1 }}
-                      />
-                    ))}
+                    <Stack spacing={1}>
+                      {result.choices.map((choice, index) => (
+                        <Button
+                          key={index}
+                          variant="outlined"
+                          onClick={() => handleChoiceSelect(choice.text, index)}
+                          disabled={continuationLoading}
+                          sx={{
+                            justifyContent: 'flex-start',
+                            textAlign: 'left',
+                            p: 2,
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            '&:hover': {
+                              backgroundColor: 'primary.light',
+                              color: 'white',
+                            }
+                          }}
+                        >
+                          <Box>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                              {String.fromCharCode(65 + index)}) {choice.text}
+                            </Typography>
+                            {choice.consequence && (
+                              <Typography variant="body2" color="text.secondary">
+                                {choice.consequence}
+                              </Typography>
+                            )}
+                          </Box>
+                        </Button>
+                      ))}
+                    </Stack>
+                    
+                    {continuationLoading && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                        <CircularProgress size={20} sx={{ mr: 2 }} />
+                        <Typography variant="body2" color="text.secondary">
+                          Continuing your adventure...
+                        </Typography>
+                      </Box>
+                    )}
                   </Box>
                 )}
               </CardContent>
