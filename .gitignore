@@ -41,7 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Training datasets (for future model training)
-training-datasets/
 *.db
 *.sqlite
 *.sqlite3
