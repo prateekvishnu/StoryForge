@@ -13,188 +13,162 @@ import {
   AutoStories as CreateIcon,
   MenuBook as ReadIcon,
   Person as PersonIcon,
+  Info as InfoIcon,
   Help as HelpIcon,
-  SupervisorAccount as ParentIcon,
   Security as SecurityIcon,
-  Lock as PrivacyIcon,
-  Report as ReportIcon,
-  Lightbulb as IdeaIcon,
-  Group as FriendsIcon,
-  Celebration as FunIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <Box
-      component="footer"
-      sx={{
-        bgcolor: 'background.paper',
-        borderTop: '4px solid',
-        borderColor: 'primary.main',
-        mt: 'auto',
-        py: 4,
+    <Box 
+      component="footer" 
+      sx={{ 
+        backgroundColor: 'background.paper',
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        py: 6,
+        mt: 8,
       }}
     >
       <Container maxWidth="lg">
-        <Box 
-          sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, 
-            gap: 4 
-          }}
-        >
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '2fr 1fr 1fr' }, 
+          gap: 4,
+          mb: 4,
+        }}>
+          
           {/* Brand Section */}
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: { xs: 'center', md: 'flex-start' }, mb: 2 }}>
-              <Box
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                }}
-              >
-                📚
-              </Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                StoryForge
-              </Typography>
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '300px', mx: { xs: 'auto', md: 0 } }}>
-              Create amazing stories with your imagination! 🌟
+          <Box>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700, 
+                mb: 2,
+                background: 'linear-gradient(135deg, #60a5fa 30%, #34d399 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              StoryForge ✨
             </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+              Create amazing adventures with AI magic! Build characters, craft stories, and bring your imagination to life.
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+              <Chip label="AI-Powered" size="small" color="primary" />
+              <Chip label="Child-Safe" size="small" color="secondary" />
+              <Chip label="Creative" size="small" color="success" />
+            </Stack>
           </Box>
 
-          {/* Fun Stuff Section */}
+          {/* Create Section */}
           <Box>
-            <Typography variant="h6" gutterBottom sx={{ mb: 0.35, fontWeight: 600 }}>
-              Fun Stuff!
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>
+              Create & Explore
             </Typography>
-            <Stack spacing={1}>
+            <Stack spacing={1.5}>
               <Button
-                variant="text"
-                startIcon={<CreateIcon />}
                 component={Link}
                 href="/create"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                variant="text"
+                startIcon={<CreateIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
               >
-                Create Story
+                Create Stories
               </Button>
               <Button
+                component={Link}
+                href="/characters"
                 variant="text"
-                startIcon={<ReadIcon />}
+                startIcon={<PersonIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
+              >
+                Character Builder
+              </Button>
+              <Button
                 component={Link}
                 href="/read"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                variant="text"
+                startIcon={<ReadIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
               >
                 Read Stories
               </Button>
+            </Stack>
+          </Box>
+
+          {/* Help & Info Section */}
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>
+              Help & Info
+            </Typography>
+            <Stack spacing={1.5}>
               <Button
-                variant="text"
-                startIcon={<PersonIcon />}
-                component={Link}
-                href="/characters"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
-              >
-                Characters
-              </Button>
-              <Button
-                variant="text"
-                startIcon={<HelpIcon />}
                 component={Link}
                 href="/help"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
-              >
-                Need Help?
-              </Button>
-            </Stack>
-          </Box>
-
-          {/* For Parents Section */}
-          <Box>
-            <Typography variant="h6" gutterBottom sx={{ mb: 0.35, fontWeight: 600 }}>
-              For Parents
-            </Typography>
-            <Stack spacing={1}>
-              <Button
                 variant="text"
-                startIcon={<ParentIcon />}
-                component={Link}
-                href="/parent"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                startIcon={<HelpIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
               >
-                Parent Dashboard
+                Help Center
               </Button>
               <Button
-                variant="text"
-                startIcon={<SecurityIcon />}
                 component={Link}
                 href="/safety"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                variant="text"
+                startIcon={<SecurityIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
               >
-                Stay Safe
+                Safety & Privacy
               </Button>
               <Button
-                variant="text"
-                startIcon={<PrivacyIcon />}
                 component={Link}
-                href="/privacy"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
-              >
-                Privacy
-              </Button>
-              <Button
+                href="/about"
                 variant="text"
-                startIcon={<ReportIcon />}
-                component={Link}
-                href="/report"
-                sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                startIcon={<InfoIcon />}
+                sx={{ justifyContent: 'flex-start', color: 'text.secondary' }}
               >
-                Tell a Grown-up
+                About StoryForge
               </Button>
-            </Stack>
-          </Box>
-
-          {/* Story Tips Section */}
-          <Box>
-            <Typography variant="h6" gutterBottom sx={{ mb: 0.35, fontWeight: 600, textAlign: 'center' }}>
-              Story Tips!
-            </Typography>
-            <Stack spacing={2} alignItems="center">
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <IdeaIcon color="primary" />
-                <Typography variant="body2">Use your imagination!</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FriendsIcon color="primary" />
-                <Typography variant="body2">Ask friends for ideas!</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FunIcon color="primary" />
-                <Typography variant="body2">Have fun creating!</Typography>
-              </Box>
             </Stack>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 4 }} />
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-            © 2024 StoryForge. Made with 💝 for young storytellers.
+        <Divider sx={{ my: 3 }} />
+        
+        {/* Bottom Section */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between',
+          alignItems: { xs: 'center', sm: 'flex-start' },
+          gap: 2,
+        }}>
+          <Typography variant="body2" color="text.secondary">
+            © 2024 StoryForge. Made with ❤️ for young storytellers.
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Chip
-              icon={<SecurityIcon />}
-              label="COPPA Compliant"
-              variant="outlined"
-              size="small"
-            />
+          
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Typography 
+              component={Link} 
+              href="/terms" 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+            >
+              Terms of Service
+            </Typography>
+            <Typography 
+              component={Link} 
+              href="/privacy" 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+            >
+              Privacy Policy
+            </Typography>
           </Box>
         </Box>
       </Container>
