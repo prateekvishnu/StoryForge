@@ -19,43 +19,43 @@ try:
     )
     from peft import PeftModel
 except ImportError as e:
-    print(f"❌ Required libraries not installed: {e}")
+    print(f"Required libraries not installed: {e}")
     print("Install with: pip install transformers peft torch")
     exit(1)
 
 class StoryForgeModelManager:
     """Manager for StoryForge custom model inference"""
     
-    def __init__(self, model_path: str = "training/models/storyforge-phi3-fine-tuned"):
+    def __init__(self, model_path: str = "training/models/storyforge-qwen-fine-tuned"):
         self.model_path = Path(model_path)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = None
         self.tokenizer = None
         self.generation_config = None
         
-        print(f"🚀 StoryForge Model Manager initialized")
-        print(f"📁 Model path: {self.model_path}")
-        print(f"🔧 Device: {self.device}")
+        print(f"StoryForge Model Manager initialized")
+        print(f"Model path: {self.model_path}")
+        print(f"Device: {self.device}")
     
     def load_model(self):
         """Load the fine-tuned model and tokenizer"""
         if not self.model_path.exists():
             raise FileNotFoundError(f"Model not found at {self.model_path}")
         
-        print("📦 Loading fine-tuned model...")
+        print("Loading fine-tuned model...")
         
         # Check if this is a PEFT model
         adapter_config_path = self.model_path / "adapter_config.json"
         is_peft_model = adapter_config_path.exists()
         
         if is_peft_model:
-            print("🔧 Loading PEFT (LoRA) model...")
+            print("Loading PEFT (LoRA) model...")
             
             # Load adapter config to get base model name
             with open(adapter_config_path, 'r') as f:
                 adapter_config = json.load(f)
             
-            base_model_name = adapter_config.get("base_model_name_or_path", "microsoft/Phi-3.5-mini-instruct")
+            base_model_name = adapter_config.get("base_model_name_or_path", "Qwen/Qwen2.5-0.5B-Instruct")
             
             # Load base model
             base_model = AutoModelForCausalLM.from_pretrained(
@@ -74,7 +74,7 @@ class StoryForgeModelManager:
                 trust_remote_code=True
             )
         else:
-            print("🔧 Loading full fine-tuned model...")
+            print("Loading full fine-tuned model...")
             
             # Load full model
             self.model = AutoModelForCausalLM.from_pretrained(
@@ -100,7 +100,7 @@ class StoryForgeModelManager:
         # Set model to evaluation mode
         self.model.eval()
         
-        print("✅ Model loaded successfully!")
+        print("Model loaded successfully!")
     
     def setup_generation_config(self):
         """Set up generation configuration for story creation"""
@@ -297,7 +297,7 @@ A)"""
             "model_path": str(self.model_path),
             "model_loaded": self.model is not None,
             "device": str(self.device),
-            "model_size": "3.7B parameters (Phi-3.5 Mini)"
+            "model_size": "0.5B parameters (Qwen2.5-0.5B-Instruct)"
         }
         
         # Try to load training metrics if available
@@ -324,20 +324,20 @@ A)"""
             )
             
             if len(test_story.strip()) > 20:
-                print("✅ Model test successful!")
-                print(f"📝 Sample story: {test_story[:100]}...")
+                print(" Model test successful!")
+                print(f" Sample story: {test_story[:100]}...")
                 return True
             else:
-                print("❌ Model test failed - generated text too short")
+                print(" Model test failed - generated text too short")
                 return False
                 
         except Exception as e:
-            print(f"❌ Model test failed: {e}")
+            print(f" Model test failed: {e}")
             return False
 
 def main():
     """Main function for testing the model manager"""
-    print("🧪 Testing StoryForge Model Manager")
+    print("Testing StoryForge Model Manager")
     print("=" * 50)
     
     # Initialize model manager
@@ -345,7 +345,7 @@ def main():
     
     # Check if model exists
     if not manager.model_path.exists():
-        print(f"❌ Model not found at {manager.model_path}")
+        print(f"Model not found at {manager.model_path}")
         print("Please run fine_tune_model.py first to create the model")
         return
     
@@ -353,20 +353,20 @@ def main():
     try:
         manager.load_model()
     except Exception as e:
-        print(f"❌ Failed to load model: {e}")
+        print(f"Failed to load model: {e}")
         return
     
     # Test model
     if manager.test_model():
-        print("\n🎉 Model is ready for use!")
+        print("\n Model is ready for use!")
         
         # Show model info
         info = manager.get_model_info()
-        print(f"\n📊 Model Information:")
+        print(f"\n Model Information:")
         for key, value in info.items():
             print(f"  {key}: {value}")
     else:
-        print("\n❌ Model test failed")
+        print("\n Model test failed")
 
 if __name__ == "__main__":
     main() 
