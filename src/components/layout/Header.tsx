@@ -39,8 +39,9 @@ export default function Header({ userName }: HeaderProps) {
 
   const navigationItems = [
     { text: 'Create Story', href: '/create', icon: <CreateIcon /> },
-    { text: 'Read Stories', href: '/read', icon: <ReadIcon /> },
     { text: 'Characters', href: '/characters', icon: <PersonIcon /> },
+    { text: 'Adventure', href: '/adventure-selection', icon: <ReadIcon /> },
+    { text: 'Read Stories', href: '/read', icon: <ReadIcon /> },
   ];
 
   const drawer = (
@@ -115,29 +116,6 @@ export default function Header({ userName }: HeaderProps) {
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
             <Button
               component={Link}
-              href="/create"
-              variant="contained"
-              color="secondary"
-              startIcon={<CreateIcon />}
-              sx={{ minWidth: 120 }}
-            >
-              Create
-            </Button>
-            <Button
-              component={Link}
-              href="/read"
-              variant="contained"
-              sx={{ 
-                minWidth: 120,
-                bgcolor: '#f59e0b',
-                '&:hover': { bgcolor: '#d97706' }
-              }}
-              startIcon={<ReadIcon />}
-            >
-              Read
-            </Button>
-            <Button
-              component={Link}
               href="/characters"
               variant="contained"
               sx={{ 
@@ -148,6 +126,29 @@ export default function Header({ userName }: HeaderProps) {
               startIcon={<PersonIcon />}
             >
               Characters
+            </Button>
+            <Button
+              component={Link}
+              href="/adventure-selection"
+              variant="contained"
+              color="secondary"
+              startIcon={<ReadIcon />}
+              sx={{ minWidth: 120 }}
+            >
+              Adventure
+            </Button>
+            <Button
+              component={Link}
+              href="/create"
+              variant="contained"
+              sx={{ 
+                minWidth: 120,
+                bgcolor: '#f59e0b',
+                '&:hover': { bgcolor: '#d97706' }
+              }}
+              startIcon={<CreateIcon />}
+            >
+              Create Story
             </Button>
             <Button
               component={Link}

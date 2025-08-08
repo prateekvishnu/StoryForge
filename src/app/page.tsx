@@ -46,30 +46,55 @@ export default function HomePage() {
           Create amazing adventures with AI magic! Build characters, craft stories, and bring your imagination to life! 📚
         </Typography>
         
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          startIcon={<CreateIcon />}
-          sx={{ 
-            minWidth: 200, 
-            py: 2, 
-            px: 4,
-            fontSize: '1.25rem',
-            fontWeight: 600,
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(52, 211, 153, 0.3)',
-            '&:hover': {
-              boxShadow: '0 12px 40px rgba(52, 211, 153, 0.4)',
-              transform: 'translateY(-2px)',
-            },
-            transition: 'all 0.3s ease-in-out',
-          }}
-          component={Link}
-          href="/create"
-        >
-          ✨ Start Creating!
-        </Button>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            startIcon={<PersonIcon />}
+            sx={{ 
+              minWidth: 200, 
+              py: 2, 
+              px: 4,
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              borderRadius: '16px',
+              boxShadow: '0 8px 32px rgba(52, 211, 153, 0.3)',
+              '&:hover': {
+                boxShadow: '0 12px 40px rgba(52, 211, 153, 0.4)',
+                transform: 'translateY(-2px)',
+              },
+              transition: 'all 0.3s ease-in-out',
+            }}
+            component={Link}
+            href="/characters"
+          >
+            🎭 Create Characters & Adventure
+          </Button>
+          <Button
+            variant="outlined"
+            size="large"
+            startIcon={<ReadIcon />}
+            sx={{ 
+              minWidth: 180, 
+              py: 2, 
+              px: 3,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              borderRadius: '16px',
+              borderWidth: 2,
+              '&:hover': {
+                borderWidth: 2,
+                transform: 'translateY(-2px)',
+              },
+              transition: 'all 0.3s ease-in-out',
+            }}
+            component={Link}
+            href="/test-adventure"
+          >
+            🎮 Try Demo Adventure
+          </Button>
+        </Stack>
       </Box>
 
       {/* Features Section */}
