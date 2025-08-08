@@ -12,6 +12,10 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
+from datasets import load_from_disk
+
+import argparse
+
 
 try:
     from transformers import (
@@ -25,7 +29,7 @@ try:
     from datasets import Dataset
     import wandb
 except ImportError as e:
-    print(f"❌ Required libraries not installed: {e}")
+    print(f"Required libraries not installed: {e}")
     print("Install with: pip install transformers datasets torch wandb accelerate peft")
     exit(1)
 
@@ -37,26 +41,26 @@ try:
         PeftModel
     )
 except ImportError:
-    print("❌ PEFT not installed. Install with: pip install peft")
+    print("PEFT not installed. Install with: pip install peft")
     exit(1)
 
 @dataclass
 class ModelConfig:
     """Configuration for model fine-tuning"""
-    model_name: str = "microsoft/Phi-3.5-mini-instruct"  # 3.7B parameter model
-    max_length: int = 2048
-    learning_rate: float = 2e-4
-    batch_size: int = 4
-    gradient_accumulation_steps: int = 4
-    num_epochs: int = 3
+    model_name: str = "Qwen/Qwen2.5-0.5B-Instruct"  # 0.5B parameter model (open access)
+    max_length: int = 2048  # Qwen2.5 supports up to 32K context
+    learning_rate: float = 3e-4  # Higher learning rate for very small model
+    batch_size: int = 8  # Large batch size for 0.5B model
+    gradient_accumulation_steps: int = 2  # Small accumulation for very small model
+    num_epochs: int = 4  # More epochs for better training
     warmup_steps: int = 100
     save_steps: int = 500
     eval_steps: int = 500
     logging_steps: int = 50
-    output_dir: str = "training/models/storyforge-phi3-fine-tuned"
+    output_dir: str = "training/models/storyforge-qwen-fine-tuned"
     use_lora: bool = True
-    lora_r: int = 16
-    lora_alpha: int = 32
+    lora_r: int = 16  # Appropriate LoRA rank for smaller model
+    lora_alpha: int = 32  # Appropriate LoRA alpha for smaller model
     lora_dropout: float = 0.1
 
 class StoryForgeTrainer:
@@ -64,9 +68,10 @@ class StoryForgeTrainer:
     
     def __init__(self, config: ModelConfig):
         self.config = config
+        Path("training/logs").mkdir(parents=True, exist_ok=True)
         self.setup_logging()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"🚀 Using device: {self.device}")
+        print(f"Using device: {self.device}")
         
         # Create output directories
         Path(config.output_dir).mkdir(parents=True, exist_ok=True)
@@ -104,17 +109,45 @@ class StoryForgeTrainer:
             self.config.model_name,
             torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
             device_map="auto" if torch.cuda.is_available() else None,
-            trust_remote_code=True
+            trust_remote_code=True,
+            attn_implementation="eager",  # Use eager attention to avoid cache issues
+            use_cache=False  # Disable KV cache for training
         )
         
         # Enable gradient checkpointing to save memory
-        self.model.gradient_checkpointing_enable()
+        try:
+            self.model.gradient_checkpointing_enable()
+            self.logger.info("Gradient checkpointing enabled")
+        except Exception as e:
+            self.logger.warning(f"Could not enable gradient checkpointing: {e}")
+            self.logger.info("Training will continue without gradient checkpointing")
         
         # Apply LoRA if enabled
         if self.config.use_lora:
             self.apply_lora()
         
-        self.logger.info("✅ Model and tokenizer loaded successfully")
+        self.logger.info("Model and tokenizer loaded successfully")
+    
+    def validate_config(self):
+        """Validate training configuration"""
+        self.logger.info("Validating configuration...")
+        
+        # Check batch size and gradient accumulation
+        effective_batch_size = self.config.batch_size * self.config.gradient_accumulation_steps
+        self.logger.info(f"Effective batch size: {effective_batch_size}")
+        
+        if effective_batch_size < 8:
+            self.logger.warning("Effective batch size is small. Consider increasing batch_size or gradient_accumulation_steps")
+        
+        # Check learning rate
+        if self.config.learning_rate > 1e-3:
+            self.logger.warning("Learning rate seems high. Consider using a lower learning rate (e.g., 1e-4)")
+        
+        # Check output directory
+        if Path(self.config.output_dir).exists():
+            self.logger.warning(f"Output directory {self.config.output_dir} already exists. Will overwrite.")
+        
+        self.logger.info("Configuration validation completed")
     
     def apply_lora(self):
         """Apply LoRA (Low-Rank Adaptation) for efficient fine-tuning"""
@@ -177,30 +210,26 @@ class StoryForgeTrainer:
         age_group = metadata.get('age_group', '7-10')
         genre = metadata.get('genre', 'adventure')
         
-        # Create a structured prompt for the model
-        prompt = f"""<|system|>
-You are a helpful AI assistant that creates engaging, age-appropriate stories for children aged {age_group}. Your stories should be safe, educational, and entertaining.
-<|end|>
-<|user|>
-Create a {genre} story suitable for children aged {age_group}.
-<|end|>
-<|assistant|>
-{story.strip()}
-<|end|>"""
+        # Create a structured prompt for the model using Llama-3.1 format
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+You are a helpful AI assistant that creates engaging, age-appropriate stories for children aged {age_group}. Your stories should be safe, educational, and entertaining.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Create a {genre} story suitable for children aged {age_group}.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+{story.strip()}<|eot_id|><|end_of_text|>"""
         
         return prompt
     
     def format_prompt_text(self, prompt: str, metadata: Dict) -> str:
         """Format prompt text for training"""
-        formatted_prompt = f"""<|system|>
-You are a helpful AI assistant that creates engaging, age-appropriate stories for children. Always ensure content is safe and suitable for young readers.
-<|end|>
-<|user|>
-{prompt.strip()}
-<|end|>
-<|assistant|>
-Once upon a time, there was a magical adventure waiting to unfold...
-<|end|>"""
+        formatted_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+You are a helpful AI assistant that creates engaging, age-appropriate stories for children. Always ensure content is safe and suitable for young readers.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+{prompt.strip()}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Once upon a time, there was a magical adventure waiting to unfold...<|eot_id|><|end_of_text|>"""
         
         return formatted_prompt
     
@@ -214,29 +243,49 @@ Once upon a time, there was a magical adventure waiting to unfold...
             return_overflowing_tokens=False,
         )
     
-    def start_training(self):
+    def start_training(self, dry_run=False):
         """Start the fine-tuning process"""
-        self.logger.info("🚀 Starting fine-tuning process...")
+        self.logger.info("Starting fine-tuning process...")
+        
+        # Validate configuration
+        self.validate_config()
         
         # Load model and tokenizer
         self.load_model_and_tokenizer()
         
-        # Load and prepare data
-        train_dataset, eval_dataset = self.load_training_data()
-        
         # Tokenize datasets
+        """
         self.logger.info("Tokenizing datasets...")
         train_dataset = train_dataset.map(
             self.tokenize_function,
             batched=True,
-            remove_columns=train_dataset.column_names
+            remove_columns=train_dataset.column_names,
+            load_from_cache_file=False,
+            num_proc=1
         )
+        
         
         eval_dataset = eval_dataset.map(
             self.tokenize_function,
             batched=True,
             remove_columns=eval_dataset.column_names
         )
+        
+        """
+        
+        # Check if pre-tokenized datasets exist
+        train_path = "training/tokenized_dataset/train"
+        val_path = "training/tokenized_dataset/val"
+        
+        if not Path(train_path).exists() or not Path(val_path).exists():
+            self.logger.error("Pre-tokenized datasets not found!")
+            self.logger.info("Please run the data preprocessing script first to create tokenized datasets")
+            raise FileNotFoundError("Pre-tokenized datasets not found. Run preprocessing first.")
+        
+        self.logger.info("Loading pre-tokenized datasets...")
+        train_dataset = load_from_disk(train_path)
+        eval_dataset = load_from_disk(val_path)
+        self.logger.info(f"Loaded {len(train_dataset)} training samples and {len(eval_dataset)} validation samples")
         
         # Data collator
         data_collator = DataCollatorForLanguageModeling(
@@ -259,7 +308,7 @@ Once upon a time, there was a magical adventure waiting to unfold...
             logging_steps=self.config.logging_steps,
             save_steps=self.config.save_steps,
             eval_steps=self.config.eval_steps,
-            evaluation_strategy="steps",
+            eval_strategy="steps",   
             save_strategy="steps",
             load_best_model_at_end=True,
             metric_for_best_model="eval_loss",
@@ -267,7 +316,7 @@ Once upon a time, there was a magical adventure waiting to unfold...
             report_to="wandb" if "WANDB_API_KEY" in os.environ else None,
             run_name=f"storyforge-phi3-{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             dataloader_pin_memory=False,
-            fp16=torch.cuda.is_available(),
+            fp16=False,  # Disable fp16 to avoid cache issues
             remove_unused_columns=False,
         )
         
@@ -282,71 +331,96 @@ Once upon a time, there was a magical adventure waiting to unfold...
             callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
         )
         
+        if dry_run:
+            self.logger.info("Dry run enabled — skipping actual training.")
+            self.logger.info("Configuration, datasets, and trainer initialized successfully.")
+            return trainer  # Return trainer for inspection/testing
+        
         # Start training
-        self.logger.info("🎯 Beginning training...")
+        self.logger.info("Beginning training...")
         trainer.train()
         
         # Save the final model
-        self.logger.info("💾 Saving final model...")
+        self.logger.info("Saving final model...")
         trainer.save_model()
         self.tokenizer.save_pretrained(self.config.output_dir)
         
         # Save training metrics
         self.save_training_metrics(trainer)
         
-        self.logger.info("✅ Training completed successfully!")
-    
+        self.logger.info("Training completed successfully!")
+
+        def save_model(self, trainer):
+            """Save the final model"""
+            self.logger.info("Saving final model...")
+            trainer.save_model()
+            self.tokenizer.save_pretrained(self.config.output_dir)
+
     def save_training_metrics(self, trainer):
         """Save training metrics and configuration"""
-        metrics = {
-            "final_train_loss": trainer.state.log_history[-1].get("train_loss", 0),
-            "final_eval_loss": trainer.state.log_history[-1].get("eval_loss", 0),
-            "total_steps": trainer.state.global_step,
-            "config": {
-                "model_name": self.config.model_name,
-                "learning_rate": self.config.learning_rate,
-                "batch_size": self.config.batch_size,
-                "num_epochs": self.config.num_epochs,
-                "use_lora": self.config.use_lora,
-                "max_length": self.config.max_length
-            },
-            "training_completed": datetime.now().isoformat()
-        }
-        
-        metrics_path = Path(self.config.output_dir) / "training_metrics.json"
-        with open(metrics_path, 'w') as f:
-            json.dump(metrics, f, indent=2)
-        
-        self.logger.info(f"📊 Training metrics saved to {metrics_path}")
+        try:
+            # Get the last log entry safely
+            log_history = trainer.state.log_history
+            if log_history:
+                final_train_loss = log_history[-1].get("train_loss", 0)
+                final_eval_loss = log_history[-1].get("eval_loss", 0)
+            else:
+                final_train_loss = 0
+                final_eval_loss = 0
+                self.logger.warning("No training logs found for metrics")
+            
+            metrics = {
+                "final_train_loss": final_train_loss,
+                "final_eval_loss": final_eval_loss,
+                "total_steps": trainer.state.global_step,
+                "config": {
+                    "model_name": self.config.model_name,
+                    "learning_rate": self.config.learning_rate,
+                    "batch_size": self.config.batch_size,
+                    "num_epochs": self.config.num_epochs,
+                    "use_lora": self.config.use_lora,
+                    "max_length": self.config.max_length
+                },
+                "training_completed": datetime.now().isoformat()
+            }
+            
+            metrics_path = Path(self.config.output_dir) / "training_metrics.json"
+            with open(metrics_path, 'w') as f:
+                json.dump(metrics, f, indent=2)
+            
+            self.logger.info(f"Training metrics saved to {metrics_path}")
+        except Exception as e:
+            self.logger.error(f"Failed to save training metrics: {e}")
 
 def main():
-    """Main function to start fine-tuning"""
-    print("🚀 StoryForge Model Fine-Tuning")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dry-run", action="store_true", help="Run a short training test with minimal data and steps")
+    args = parser.parse_args()
+
+    print("StoryForge Model Fine-Tuning")
     print("=" * 50)
-    
-    # Initialize configuration
+
     config = ModelConfig()
-    
-    # Check for CUDA availability
+
     if torch.cuda.is_available():
-        print(f"✅ CUDA available: {torch.cuda.get_device_name()}")
-        print(f"💾 GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+        print(f"CUDA available: {torch.cuda.get_device_name()}")
+        print(f"GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     else:
-        print("⚠️  CUDA not available. Training will be slower on CPU.")
-        # Reduce batch size for CPU training
+        print("CUDA not available. Training will be slower on CPU.")
         config.batch_size = 1
         config.gradient_accumulation_steps = 8
-    
-    # Initialize trainer
+
     trainer = StoryForgeTrainer(config)
-    
-    # Start training
+
     try:
-        trainer.start_training()
-        print("\n🎉 Fine-tuning completed successfully!")
-        print(f"📁 Model saved to: {config.output_dir}")
+        trainer.start_training(dry_run=args.dry_run)
+        if args.dry_run:
+            print("\nDry run finished successfully")
+        else:
+            print("\nFine-tuning completed successfully")
+            print(f"Model saved to: {config.output_dir}")
     except Exception as e:
-        print(f"❌ Training failed: {e}")
+        print(f"Training failed: {e}")
         raise
 
 if __name__ == "__main__":
