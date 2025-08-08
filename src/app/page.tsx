@@ -46,55 +46,30 @@ export default function HomePage() {
           Create amazing adventures with AI magic! Build characters, craft stories, and bring your imagination to life! 📚
         </Typography>
         
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'center' }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="large"
-            startIcon={<PersonIcon />}
-            sx={{ 
-              minWidth: 200, 
-              py: 2, 
-              px: 4,
-              fontSize: '1.25rem',
-              fontWeight: 600,
-              borderRadius: '16px',
-              boxShadow: '0 8px 32px rgba(52, 211, 153, 0.3)',
-              '&:hover': {
-                boxShadow: '0 12px 40px rgba(52, 211, 153, 0.4)',
-                transform: 'translateY(-2px)',
-              },
-              transition: 'all 0.3s ease-in-out',
-            }}
-            component={Link}
-            href="/characters"
-          >
-            🎭 Create Characters & Adventure
-          </Button>
-          <Button
-            variant="outlined"
-            size="large"
-            startIcon={<ReadIcon />}
-            sx={{ 
-              minWidth: 180, 
-              py: 2, 
-              px: 3,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              borderRadius: '16px',
-              borderWidth: 2,
-              '&:hover': {
-                borderWidth: 2,
-                transform: 'translateY(-2px)',
-              },
-              transition: 'all 0.3s ease-in-out',
-            }}
-            component={Link}
-            href="/test-adventure"
-          >
-            🎮 Try Demo Adventure
-          </Button>
-        </Stack>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="large"
+          startIcon={<PersonIcon />}
+          sx={{ 
+            minWidth: 200, 
+            py: 2, 
+            px: 4,
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(52, 211, 153, 0.3)',
+            '&:hover': {
+              boxShadow: '0 12px 40px rgba(52, 211, 153, 0.4)',
+              transform: 'translateY(-2px)',
+            },
+            transition: 'all 0.3s ease-in-out',
+          }}
+          component={Link}
+          href="/characters"
+        >
+          👥 Create Characters!
+        </Button>
       </Box>
 
       {/* Features Section */}
@@ -109,23 +84,52 @@ export default function HomePage() {
             mb: 6,
           }}
         >
-          What Can You Do? 🤔
+          Your Story Journey! 🚀
         </Typography>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-          {/* Single Create Story Feature */}
-          <Card sx={{ maxWidth: 400, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4, mb: 8 }}>
+          {/* Step 1: Create Characters */}
+          <Card sx={{ display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: 1, textAlign: 'center', p: 4 }}>
-              <CreateIcon sx={{ fontSize: 80, color: 'secondary.main', mb: 3 }} />
+              <PersonIcon sx={{ fontSize: 80, color: 'primary.main', mb: 3 }} />
               <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
-                📝 Create a Story
+                👥 Step 1: Create Characters
               </Typography>
               <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, mb: 3 }}>
-                Create awesome adventures with help from AI! Make stories about anything you can imagine with interactive choices and exciting plots!
+                Start your adventure by creating amazing characters! Give them names, personalities, and special powers. They'll be the heroes of your story!
               </Typography>
               <Button
                 component={Link}
-                href="/create"
+                href="/characters"
+                variant="contained"
+                size="large"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  bgcolor: 'primary.main',
+                  '&:hover': { bgcolor: 'primary.dark' }
+                }}
+              >
+                Create Characters! 👥
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Step 2: Adventure Time */}
+          <Card sx={{ display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ flex: 1, textAlign: 'center', p: 4 }}>
+              <CreateIcon sx={{ fontSize: 80, color: 'secondary.main', mb: 3 }} />
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
+                ⚡ Step 2: Adventure Time!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, mb: 3 }}>
+                Once you have characters, start your choose-your-adventure story! Make decisions, explore different paths, and see where your imagination takes you!
+              </Typography>
+              <Button
+                component={Link}
+                href="/adventure"
                 variant="contained"
                 size="large"
                 sx={{
@@ -137,7 +141,7 @@ export default function HomePage() {
                   '&:hover': { bgcolor: 'secondary.dark' }
                 }}
               >
-                Start Creating! ✨
+                Start Adventure! ⚡
               </Button>
             </CardContent>
           </Card>

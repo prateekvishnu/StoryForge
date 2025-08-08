@@ -1,154 +1,143 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
   Card,
   CardContent,
   Box,
-  TextField,
   Button,
+  TextField,
+  Grid,
+  Chip,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Grid,
-  Stack,
-  Avatar,
-  Chip,
-  IconButton,
   Alert,
-  Divider,
 } from '@mui/material';
 import {
   Person as PersonIcon,
   Add as AddIcon,
   Delete as DeleteIcon,
-  Save as SaveIcon,
   AutoStories as AdventureIcon,
 } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Character {
   id: string;
   name: string;
-  age: string;
-  description: string;
-  role: 'protagonist' | 'sidekick' | 'mentor' | 'villain' | 'helper';
+  role: string;
   personality: string;
   appearance: string;
 }
 
 const CHARACTER_ROLES = [
-  { value: 'protagonist', label: '🦸 Hero/Protagonist', description: 'The main character of your story' },
-  { value: 'sidekick', label: '👫 Best Friend/Sidekick', description: 'The loyal companion who helps the hero' },
-  { value: 'mentor', label: '🧙 Wise Mentor', description: 'The wise character who guides others' },
-  { value: 'villain', label: '😈 Villain/Antagonist', description: 'The character who creates challenges' },
-  { value: 'helper', label: '🤝 Helpful Character', description: 'A supporting character who assists' },
+  'Hero',
+  'Sidekick',
+  'Wise Mentor',
+  'Funny Friend',
+  'Brave Warrior',
+  'Smart Inventor',
+  'Kind Helper',
+  'Mysterious Guide'
 ];
 
-const CHARACTER_TEMPLATES = [
-  {
-    name: 'Alex the Explorer',
-    age: '12',
-    role: 'protagonist' as const,
-    personality: 'Brave, curious, and always ready for adventure',
-    appearance: 'Wears a explorer hat and carries a backpack full of tools',
-    description: 'A young explorer who loves discovering new places and solving mysteries'
-  },
-  {
-    name: 'Luna the Wise',
-    age: '15',
-    role: 'mentor' as const,
-    personality: 'Kind, patient, and full of wisdom',
-    appearance: 'Has silver hair and carries an ancient book',
-    description: 'A young sage who knows the secrets of the magical world'
-  },
-  {
-    name: 'Buddy the Loyal',
-    age: '11',
-    role: 'sidekick' as const,
-    personality: 'Funny, loyal, and always optimistic',
-    appearance: 'Wears colorful clothes and has a big smile',
-    description: 'The best friend everyone wishes they had, always ready to help'
-  }
+const PERSONALITY_TRAITS = [
+  'Brave and bold',
+  'Kind and caring',
+  'Smart and clever',
+  'Funny and cheerful',
+  'Curious and adventurous',
+  'Loyal and trustworthy',
+  'Creative and imaginative',
+  'Calm and wise'
+];
+
+const APPEARANCE_OPTIONS = [
+  'Tall with brown hair',
+  'Short with blonde hair',
+  'Medium height with black hair',
+  'Curly red hair and freckles',
+  'Long dark hair and bright eyes',
+  'Silver hair and kind smile',
+  'Colorful clothes and hat',
+  'Magical cloak and staff'
 ];
 
 export default function CharacterBuilder() {
-  const router = useRouter();
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [currentCharacter, setCurrentCharacter] = useState<Partial<Character>>({
+  const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
     name: '',
-    age: '',
-    description: '',
-    role: 'protagonist',
+    role: '',
     personality: '',
-    appearance: '',
+    appearance: ''
   });
-  const [showSuccess, setShowSuccess] = useState(false);
 
-  const addCharacter = () => {
-    if (!currentCharacter.name || !currentCharacter.description) {
-      return;
+  // Load characters from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('storyforge_characters');
+    if (saved) {
+      setCharacters(JSON.parse(saved));
     }
+  }, []);
 
-    const newCharacter: Character = {
-      id: Date.now().toString(),
-      name: currentCharacter.name,
-      age: currentCharacter.age || '12',
-      description: currentCharacter.description,
-      role: currentCharacter.role || 'protagonist',
-      personality: currentCharacter.personality || '',
-      appearance: currentCharacter.appearance || '',
-    };
+  // Save characters to localStorage
+  useEffect(() => {
+    localStorage.setItem('storyforge_characters', JSON.stringify(characters));
+  }, [characters]);
 
-    setCharacters([...characters, newCharacter]);
-    setCurrentCharacter({
-      name: '',
-      age: '',
-      description: '',
-      role: 'protagonist',
-      personality: '',
-      appearance: '',
-    });
+  const handleOpen = (character?: Character) => {
+    if (character) {
+      setEditingId(character.id);
+      setFormData({
+        name: character.name,
+        role: character.role,
+        personality: character.personality,
+        appearance: character.appearance
+      });
+    } else {
+      setEditingId(null);
+      setFormData({ name: '', role: '', personality: '', appearance: '' });
+    }
+    setOpen(true);
   };
 
-  const removeCharacter = (id: string) => {
-    setCharacters(characters.filter(char => char.id !== id));
+  const handleClose = () => {
+    setOpen(false);
+    setEditingId(null);
+    setFormData({ name: '', role: '', personality: '', appearance: '' });
   };
 
-  const useTemplate = (template: typeof CHARACTER_TEMPLATES[0]) => {
-    setCurrentCharacter({
-      name: template.name,
-      age: template.age,
-      description: template.description,
-      role: template.role,
-      personality: template.personality,
-      appearance: template.appearance,
-    });
+  const handleSave = () => {
+    if (!formData.name.trim()) return;
+
+    if (editingId) {
+      // Edit existing character
+      setCharacters(prev => prev.map(char => 
+        char.id === editingId ? { ...char, ...formData } : char
+      ));
+    } else {
+      // Add new character
+      const newCharacter: Character = {
+        id: Date.now().toString(),
+        ...formData
+      };
+      setCharacters(prev => [...prev, newCharacter]);
+    }
+    handleClose();
   };
 
-  const saveAndContinue = () => {
-    // Save characters to localStorage for use in adventure selection
-    localStorage.setItem('storyforge-characters', JSON.stringify(characters));
-    setShowSuccess(true);
-    
-    // Navigate to adventure selection after a brief delay
-    setTimeout(() => {
-      router.push('/adventure-selection');
-    }, 1500);
-  };
-
-  const getRoleColor = (role: string) => {
-    const colors = {
-      protagonist: 'primary',
-      sidekick: 'secondary',
-      mentor: 'info',
-      villain: 'error',
-      helper: 'success',
-    };
-    return colors[role as keyof typeof colors] || 'default';
+  const handleDelete = (id: string) => {
+    setCharacters(prev => prev.filter(char => char.id !== id));
   };
 
   return (
@@ -164,208 +153,177 @@ export default function CharacterBuilder() {
         }}
       >
         <PersonIcon sx={{ mr: 2, verticalAlign: 'middle', fontSize: 'inherit' }} />
-        Character Builder
+        👥 Character Builder
       </Typography>
 
-      {showSuccess && (
-        <Alert severity="success" sx={{ mb: 4 }}>
-          Characters saved successfully! Redirecting to adventure selection...
+      {characters.length === 0 && (
+        <Alert severity="info" sx={{ mb: 4 }}>
+          Create your first character to start your adventure! Characters make your stories more exciting and personal.
         </Alert>
       )}
-      
-      <Grid container spacing={4}>
-        {/* Character Creation Form */}
-        <Grid item xs={12} md={6}>
-          <Card sx={{ height: 'fit-content' }}>
-            <CardContent>
-              <Typography variant="h5" sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-                <AddIcon sx={{ mr: 1 }} />
-                Create New Character
-              </Typography>
 
-              {/* Quick Templates */}
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                  🎭 Quick Templates
+      {/* Characters Grid */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {characters.map((character) => (
+          <Grid item xs={12} sm={6} md={4} key={character.id}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <CardContent sx={{ flex: 1 }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                  {character.name}
                 </Typography>
-                <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
-                  {CHARACTER_TEMPLATES.map((template, index) => (
-                    <Chip
-                      key={index}
-                      label={template.name}
-                      onClick={() => useTemplate(template)}
-                      variant="outlined"
-                      sx={{ cursor: 'pointer' }}
-                    />
-                  ))}
-                </Stack>
-              </Box>
-
-              <Divider sx={{ mb: 3 }} />
-
-              <Stack spacing={3}>
-                <TextField
-                  fullWidth
-                  label="Character Name"
-                  value={currentCharacter.name || ''}
-                  onChange={(e) => setCurrentCharacter({...currentCharacter, name: e.target.value})}
-                  placeholder="e.g., Maya the Explorer"
+                <Chip 
+                  label={character.role} 
+                  color="primary" 
+                  size="small" 
+                  sx={{ mb: 2 }}
                 />
-
-                <TextField
-                  fullWidth
-                  label="Age"
-                  value={currentCharacter.age || ''}
-                  onChange={(e) => setCurrentCharacter({...currentCharacter, age: e.target.value})}
-                  placeholder="e.g., 12"
-                />
-
-                <FormControl fullWidth>
-                  <InputLabel>Character Role</InputLabel>
-                  <Select
-                    value={currentCharacter.role || 'protagonist'}
-                    onChange={(e) => setCurrentCharacter({...currentCharacter, role: e.target.value as any})}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <strong>Personality:</strong> {character.personality}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <strong>Appearance:</strong> {character.appearance}
+                </Typography>
+                <Stack direction="row" spacing={1} justifyContent="space-between">
+                  <Button 
+                    size="small" 
+                    onClick={() => handleOpen(character)}
+                    variant="outlined"
                   >
-                    {CHARACTER_ROLES.map((role) => (
-                      <MenuItem key={role.value} value={role.value}>
-                        <Box>
-                          <Typography variant="body1">{role.label}</Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {role.description}
-                          </Typography>
-                        </Box>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <TextField
-                  fullWidth
-                  label="Description"
-                  multiline
-                  rows={2}
-                  value={currentCharacter.description || ''}
-                  onChange={(e) => setCurrentCharacter({...currentCharacter, description: e.target.value})}
-                  placeholder="What makes this character special?"
-                />
-
-                <TextField
-                  fullWidth
-                  label="Personality"
-                  value={currentCharacter.personality || ''}
-                  onChange={(e) => setCurrentCharacter({...currentCharacter, personality: e.target.value})}
-                  placeholder="e.g., Brave, curious, funny"
-                />
-
-                <TextField
-                  fullWidth
-                  label="Appearance"
-                  value={currentCharacter.appearance || ''}
-                  onChange={(e) => setCurrentCharacter({...currentCharacter, appearance: e.target.value})}
-                  placeholder="e.g., Wears a red cape and carries a magic wand"
-                />
-
-                <Button
-                  variant="contained"
-                  onClick={addCharacter}
-                  disabled={!currentCharacter.name || !currentCharacter.description}
-                  startIcon={<AddIcon />}
-                  size="large"
-                >
-                  Add Character
-                </Button>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Character List */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-                <PersonIcon sx={{ mr: 1 }} />
-                Your Characters ({characters.length})
-              </Typography>
-
-              {characters.length === 0 ? (
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <PersonIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-                  <Typography variant="h6" color="text.secondary">
-                    No characters yet
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Create your first character to get started!
-                  </Typography>
-                </Box>
-              ) : (
-                <Stack spacing={2}>
-                  {characters.map((character) => (
-                    <Card key={character.id} variant="outlined">
-                      <CardContent sx={{ pb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                          <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                              <Avatar sx={{ mr: 2, bgcolor: `${getRoleColor(character.role)}.main` }}>
-                                {character.name.charAt(0)}
-                              </Avatar>
-                              <Box>
-                                <Typography variant="h6">{character.name}</Typography>
-                                <Chip 
-                                  size="small" 
-                                  label={CHARACTER_ROLES.find(r => r.value === character.role)?.label} 
-                                  color={getRoleColor(character.role) as any}
-                                />
-                              </Box>
-                            </Box>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                              Age: {character.age} • {character.description}
-                            </Typography>
-                            {character.personality && (
-                              <Typography variant="caption" display="block">
-                                <strong>Personality:</strong> {character.personality}
-                              </Typography>
-                            )}
-                            {character.appearance && (
-                              <Typography variant="caption" display="block">
-                                <strong>Appearance:</strong> {character.appearance}
-                              </Typography>
-                            )}
-                          </Box>
-                          <IconButton 
-                            onClick={() => removeCharacter(character.id)}
-                            size="small"
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Stack>
-              )}
-
-              {characters.length > 0 && (
-                <Box sx={{ mt: 4, textAlign: 'center' }}>
-                  <Button
-                    variant="contained"
-                    size="large"
-                    onClick={saveAndContinue}
-                    startIcon={<AdventureIcon />}
-                    sx={{ minWidth: 200 }}
-                  >
-                    Start Adventure
+                    Edit
                   </Button>
-                  <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                    Your characters will be saved for the story
-                  </Typography>
-                </Box>
-              )}
+                  <Button 
+                    size="small" 
+                    color="error"
+                    onClick={() => handleDelete(character.id)}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+
+        {/* Add Character Card */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Card 
+            sx={{ 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column',
+              cursor: 'pointer',
+              border: '2px dashed',
+              borderColor: 'primary.main',
+              '&:hover': { borderColor: 'primary.dark' }
+            }}
+            onClick={() => handleOpen()}
+          >
+            <CardContent sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center'
+            }}>
+              <AddIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
+              <Typography variant="h6" color="primary.main">
+                Add New Character
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
+      {/* Action Buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+        <Button
+          variant="contained"
+          size="large"
+          onClick={() => handleOpen()}
+          startIcon={<AddIcon />}
+        >
+          Add Character
+        </Button>
+        
+        {characters.length > 0 && (
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            component={Link}
+            href="/adventure"
+            startIcon={<AdventureIcon />}
+          >
+            Start Adventure! 🚀
+          </Button>
+        )}
+      </Box>
+
+      {/* Character Dialog */}
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {editingId ? 'Edit Character' : 'Create New Character'}
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 2 }}>
+            <TextField
+              label="Character Name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="e.g., Luna the Explorer"
+              fullWidth
+            />
+
+            <FormControl fullWidth>
+              <InputLabel>Role</InputLabel>
+              <Select
+                value={formData.role}
+                onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+              >
+                {CHARACTER_ROLES.map((role) => (
+                  <MenuItem key={role} value={role}>{role}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Personality</InputLabel>
+              <Select
+                value={formData.personality}
+                onChange={(e) => setFormData(prev => ({ ...prev, personality: e.target.value }))}
+              >
+                {PERSONALITY_TRAITS.map((trait) => (
+                  <MenuItem key={trait} value={trait}>{trait}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Appearance</InputLabel>
+              <Select
+                value={formData.appearance}
+                onChange={(e) => setFormData(prev => ({ ...prev, appearance: e.target.value }))}
+              >
+                {APPEARANCE_OPTIONS.map((appearance) => (
+                  <MenuItem key={appearance} value={appearance}>{appearance}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button 
+            onClick={handleSave} 
+            variant="contained"
+            disabled={!formData.name.trim()}
+          >
+            {editingId ? 'Save Changes' : 'Create Character'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 } 
