@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Story generation with custom fine-tuned model
-async function generateWithCustomModel(prompt: string, characters: string, storyHistory: string) {
+// Story generation with primary model (DeepSeek R1)
+async function generateWithPrimaryModel(prompt: string, characters: string, storyHistory: string) {
   try {
-    // Use Ollama with our custom fine-tuned model
+    // Use Ollama with DeepSeek R1 (latest version available)
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'storyforge-qwen-fine-tuned',
+        model: 'deepseek-r1:latest',
         prompt: `You are a helpful AI assistant that creates engaging, age-appropriate adventure stories for children aged 9-12. 
 
 Characters: ${characters}
@@ -42,27 +42,47 @@ C: [third choice]`,
     const data = await response.json();
     const fullResponse = data.response;
 
-    // Parse the response
-    const storyMatch = fullResponse.match(/STORY:\s*(.*?)\s*CHOICES:/s);
+    // Parse the response - more flexible parsing
+    let story = '';
+    let choices: string[] = [];
+
+    // Try to extract story and choices from the response
+    const storyMatch = fullResponse.match(/STORY:\s*(.*?)\s*(?:CHOICES:|$)/s);
     const choicesMatch = fullResponse.match(/CHOICES:\s*(.*)/s);
 
-    if (!storyMatch || !choicesMatch) {
-      throw new Error('Invalid response format from model');
+    if (storyMatch) {
+      story = storyMatch[1].trim();
+    } else {
+      // If no STORY: marker, use the first part before CHOICES:
+      const parts = fullResponse.split('CHOICES:');
+      story = parts[0].trim();
     }
 
-    const story = storyMatch[1].trim();
-    const choicesText = choicesMatch[1].trim();
-    
-    // Extract individual choices
-    const choices = choicesText
-      .split(/[ABC]:\s*/)
-      .filter(choice => choice.trim())
-      .map(choice => choice.trim())
-      .slice(0, 3);
+    if (choicesMatch) {
+      const choicesText = choicesMatch[1].trim();
+      // Extract individual choices
+      choices = choicesText
+        .split(/[ABC]:\s*/)
+        .filter(choice => choice.trim())
+        .map(choice => choice.trim())
+        .slice(0, 3);
+    }
+
+    // Fallback: if no proper choices found, generate default ones
+    if (choices.length === 0) {
+      choices = [
+        "Explore deeper into the area",
+        "Talk to someone nearby for help",
+        "Try a different approach"
+      ];
+    }
+
+    // Clean up story text
+    story = story.replace(/^\*+|\*+$/g, '').trim();
 
     return { story, choices };
   } catch (error) {
-    console.error('Custom model error:', error);
+    console.error('Primary model error:', error);
     throw error;
   }
 }
@@ -105,15 +125,21 @@ C: [choice 3]`,
     const data = await response.json();
     const fullResponse = data.response;
 
-    // Parse response
-    const storyMatch = fullResponse.match(/STORY:\s*(.*?)\s*CHOICES:/s);
+    // Parse response - consistent with primary model
+    let story = '';
+    let choices: string[] = [];
+
+    const storyMatch = fullResponse.match(/STORY:\s*(.*?)\s*(?:CHOICES:|$)/s);
     const choicesMatch = fullResponse.match(/CHOICES:\s*(.*)/s);
 
-    const story = storyMatch ? storyMatch[1].trim() : fullResponse.split('CHOICES:')[0].trim();
-    const choicesText = choicesMatch ? choicesMatch[1].trim() : '';
-    
-    let choices = [];
-    if (choicesText) {
+    if (storyMatch) {
+      story = storyMatch[1].trim();
+    } else {
+      story = fullResponse.split('CHOICES:')[0].trim();
+    }
+
+    if (choicesMatch) {
+      const choicesText = choicesMatch[1].trim();
       choices = choicesText
         .split(/[ABC]:\s*/)
         .filter(choice => choice.trim())
@@ -129,6 +155,9 @@ C: [choice 3]`,
         "Try something completely different"
       ];
     }
+
+    // Clean up story text
+    story = story.replace(/^\*+|\*+$/g, '').trim();
 
     return { story, choices };
   } catch (error) {
@@ -148,12 +177,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Try custom model first, fallback to DeepSeek if needed
+    // Try primary model first, fallback to smaller model if needed
     let result;
     try {
-      result = await generateWithCustomModel(prompt, characters || '', storyHistory || '');
+      result = await generateWithPrimaryModel(prompt, characters || '', storyHistory || '');
     } catch (error) {
-      console.log('Custom model failed, using fallback...');
+      console.log('Primary model failed, using fallback...');
       result = await generateWithFallback(prompt, characters || '', storyHistory || '');
     }
 
@@ -176,7 +205,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({ 
     message: 'Adventure Story API is running',
-    models: ['storyforge-qwen-fine-tuned', 'deepseek-r1:1.5b'],
+    models: ['deepseek-r1:latest', 'deepseek-r1:1.5b'],
     status: 'active'
   });
 }

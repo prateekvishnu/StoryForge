@@ -144,8 +144,16 @@ export default function AdventurePage() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h3" sx={{ mb: 4, textAlign: 'center', fontWeight: 'bold' }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Typography 
+        variant="h3" 
+        sx={{ 
+          mb: { xs: 3, sm: 4 }, 
+          textAlign: 'center', 
+          fontWeight: 'bold',
+          fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem' }
+        }}
+      >
         🗡️ Choose Your Adventure! ⚡
       </Typography>
 
@@ -170,12 +178,25 @@ export default function AdventurePage() {
 
       {!hasStarted ? (
         /* Initial Prompt */
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h5" sx={{ mb: 3 }}>
+        <Card sx={{ mb: { xs: 3, sm: 4 } }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                mb: { xs: 2, sm: 3 },
+                fontSize: { xs: '1.25rem', sm: '1.5rem' }
+              }}
+            >
               🚀 Start Your Adventure!
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography 
+              variant="body1" 
+              color="text.secondary" 
+              sx={{ 
+                mb: { xs: 2, sm: 3 },
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }}
+            >
               Describe how you want your adventure to begin. Your characters will be part of the story!
             </Typography>
             <TextField
@@ -185,7 +206,7 @@ export default function AdventurePage() {
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}
               placeholder="Example: The heroes find themselves in a mysterious forest where they hear strange sounds coming from a hidden cave..."
-              sx={{ mb: 3 }}
+              sx={{ mb: { xs: 2, sm: 3 } }}
             />
             <Button
               variant="contained"
@@ -193,7 +214,10 @@ export default function AdventurePage() {
               onClick={startAdventure}
               disabled={!userPrompt.trim() || loading}
               startIcon={loading ? <CircularProgress size={20} /> : <StoryIcon />}
-              sx={{ minWidth: 200 }}
+              sx={{ 
+                minWidth: { xs: '100%', sm: 200 },
+                py: { xs: 1.5, sm: 1.25 }
+              }}
             >
               {loading ? 'Creating Adventure...' : 'Begin Adventure! 🚀'}
             </Button>
@@ -238,12 +262,18 @@ export default function AdventurePage() {
 
           {/* Choices */}
           {currentChoices.length > 0 && (
-            <Card sx={{ mb: 4 }}>
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 3 }}>
+            <Card sx={{ mb: { xs: 3, sm: 4 } }}>
+              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    mb: { xs: 2, sm: 3 },
+                    fontSize: { xs: '1.1rem', sm: '1.25rem' }
+                  }}
+                >
                   🤔 What happens next? Choose your path:
                 </Typography>
-                <Stack spacing={2}>
+                <Stack spacing={{ xs: 1.5, sm: 2 }}>
                   {currentChoices.map((choice, index) => (
                     <Button
                       key={index}
@@ -252,11 +282,12 @@ export default function AdventurePage() {
                       onClick={() => handleChoiceClick(choice)}
                       disabled={loading}
                       sx={{
-                        p: 2,
+                        p: { xs: 1.5, sm: 2 },
                         textAlign: 'left',
                         justifyContent: 'flex-start',
                         textTransform: 'none',
-                        fontSize: '1rem',
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
+                        lineHeight: 1.4,
                       }}
                     >
                       <strong>{String.fromCharCode(65 + index)}:</strong>&nbsp;{choice}
@@ -264,24 +295,37 @@ export default function AdventurePage() {
                   ))}
                   
                   {/* Custom Choice */}
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                  <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+                    <Typography 
+                      variant="subtitle1" 
+                      sx={{ 
+                        mb: { xs: 1.5, sm: 2 },
+                        fontSize: { xs: '1rem', sm: '1.1rem' }
+                      }}
+                    >
                       💭 Or create your own choice:
                     </Typography>
-                    <Stack direction="row" spacing={2}>
+                    <Stack 
+                      direction={{ xs: 'column', sm: 'row' }} 
+                      spacing={{ xs: 1.5, sm: 2 }}
+                    >
                       <TextField
                         fullWidth
                         value={customChoice}
                         onChange={(e) => setCustomChoice(e.target.value)}
                         placeholder="Describe what you want to happen next..."
                         disabled={loading}
+                        sx={{ flex: 1 }}
                       />
                       <Button
                         variant="contained"
                         onClick={handleCustomChoice}
                         disabled={!customChoice.trim() || loading}
                         startIcon={loading ? <CircularProgress size={20} /> : <SendIcon />}
-                        sx={{ minWidth: 120 }}
+                        sx={{ 
+                          minWidth: { xs: '100%', sm: 120 },
+                          py: { xs: 1.5, sm: 1.25 }
+                        }}
                       >
                         {loading ? 'Creating...' : 'Go!'}
                       </Button>
@@ -301,4 +345,4 @@ export default function AdventurePage() {
       )}
     </Container>
   );
-}
+} 
