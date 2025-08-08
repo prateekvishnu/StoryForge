@@ -87,43 +87,33 @@ export default function HomePage() {
           What Can You Do? 🤔
         </Typography>
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 4, mb: 8 }}>
-          {/* Write Stories Feature */}
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
+          {/* Single Create Story Feature */}
+          <Card sx={{ maxWidth: 400, display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ flex: 1, textAlign: 'center', p: 4 }}>
-              <CreateIcon sx={{ fontSize: 60, color: 'secondary.main', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'text.primary' }}>
-                📝 Write Stories
+              <CreateIcon sx={{ fontSize: 80, color: 'secondary.main', mb: 3 }} />
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, color: 'text.primary' }}>
+                📝 Create a Story
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                Create awesome adventures with help from AI! Make stories about anything you can imagine!
+              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, mb: 3 }}>
+                Create awesome adventures with help from AI! Make stories about anything you can imagine with interactive choices and exciting plots!
               </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Make Pictures Feature */}
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flex: 1, textAlign: 'center', p: 4 }}>
-              <ArtIcon sx={{ fontSize: 60, color: 'warning.main', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'text.primary' }}>
-                🎨 Make Pictures
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                AI will draw pictures for your stories! Watch your characters and places come to life!
-              </Typography>
-            </CardContent>
-          </Card>
-
-          {/* Learn & Grow Feature */}
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flex: 1, textAlign: 'center', p: 4 }}>
-              <LearnIcon sx={{ fontSize: 60, color: 'info.main', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'text.primary' }}>
-                🎓 Learn & Grow
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                Get better at writing and storytelling! Earn cool badges for your achievements!
-              </Typography>
+              <Button
+                component={Link}
+                href="/create"
+                variant="contained"
+                size="large"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  bgcolor: 'secondary.main',
+                  '&:hover': { bgcolor: 'secondary.dark' }
+                }}
+              >
+                Start Creating! ✨
+              </Button>
             </CardContent>
           </Card>
         </Box>

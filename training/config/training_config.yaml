@@ -1,0 +1,107 @@
+# StoryForge Custom Model Training Configuration
+
+# Model Configuration
+model:
+  name: "microsoft/Phi-3.5-mini-instruct"  # 3.7B parameter model
+  max_length: 2048
+  use_lora: true
+  
+# LoRA Configuration (for efficient fine-tuning)
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.1
+  target_modules: 
+    - "q_proj"
+    - "v_proj" 
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+# Training Parameters
+training:
+  learning_rate: 2e-4
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  num_epochs: 3
+  warmup_steps: 100
+  weight_decay: 0.01
+  
+# Evaluation and Logging
+evaluation:
+  eval_steps: 500
+  save_steps: 500
+  logging_steps: 50
+  metric_for_best_model: "eval_loss"
+  load_best_model_at_end: true
+  early_stopping_patience: 3
+
+# Data Configuration
+data:
+  train_test_split: 0.1
+  min_story_length: 50
+  min_prompt_length: 20
+  chunk_size: 1000
+
+# Generation Configuration
+generation:
+  max_new_tokens: 1024
+  min_new_tokens: 50
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+  no_repeat_ngram_size: 3
+
+# Paths
+paths:
+  training_datasets: "training-datasets"
+  vector_db: "training/vector-db"
+  processed_data: "training/processed_data.json"
+  output_dir: "training/models/storyforge-phi3-fine-tuned"
+  logs_dir: "training/logs"
+  checkpoints_dir: "training/checkpoints"
+
+# Vector Database Configuration
+vector_db:
+  embedding_model: "all-MiniLM-L6-v2"
+  collections:
+    - "children_stories"
+    - "story_dialogues" 
+    - "character_descriptions"
+    - "story_prompts"
+    - "training_metadata"
+
+# Age Group Configurations
+age_groups:
+  "5-8":
+    max_story_length: 300
+    vocabulary_level: "simple"
+    themes: ["friendship", "animals", "family", "adventure"]
+  
+  "9-12":
+    max_story_length: 600
+    vocabulary_level: "intermediate"
+    themes: ["adventure", "mystery", "fantasy", "science", "friendship"]
+  
+  "13-16":
+    max_story_length: 1000
+    vocabulary_level: "advanced"
+    themes: ["adventure", "mystery", "fantasy", "sci-fi", "drama", "friendship"]
+
+# Content Safety
+safety:
+  enable_content_filtering: true
+  banned_words: []
+  required_themes: ["positive", "educational", "age-appropriate"]
+  max_violence_level: 0
+  ensure_positive_endings: true
+
+# Hardware Configuration
+hardware:
+  use_cuda: true
+  mixed_precision: true
+  gradient_checkpointing: true
+  dataloader_pin_memory: false 
