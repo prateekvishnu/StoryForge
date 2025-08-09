@@ -246,6 +246,28 @@ To improve the training pipeline:
 
 This training setup is part of the StoryForge project and follows the same licensing terms.
 
+## 🔄 GGUF Conversion Status
+
+⚠️ **In Progress**: The fine-tuned model is currently in Hugging Face format and needs to be converted to GGUF format for Ollama integration. 
+
+**Current Status:**
+- ✅ Model successfully fine-tuned and merged (Qwen2.5-0.5B-Instruct base)
+- ✅ Merged model available at `training/models/storyforge-qwen-fine-tuned-merged/`
+- ✅ Modelfile created for Ollama integration (`training/models/Modelfile.storyforge`)
+- ⚠️ GGUF conversion encountering dependency conflicts with transformers/urllib3/accelerate
+- 🔄 **Temporary Solution**: Application currently uses DeepSeek R1 models as fallback
+
+**Next Steps:**
+1. Resolve Python environment dependency conflicts
+2. Complete GGUF conversion using llama.cpp
+3. Import custom model into Ollama
+4. Update application to use custom `storyforge-qwen-fine-tuned` model
+
+**Alternative Approaches Being Explored:**
+- Clean Python environment setup
+- Docker-based conversion
+- Pre-built GGUF conversion tools
+
 ## 🆘 Support
 
 For issues with training:
