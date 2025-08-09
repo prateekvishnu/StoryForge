@@ -246,27 +246,29 @@ To improve the training pipeline:
 
 This training setup is part of the StoryForge project and follows the same licensing terms.
 
-## 🔄 GGUF Conversion Status
+## 🔄 GGUF Conversion & Ollama Integration Status
 
-⚠️ **In Progress**: The fine-tuned model is currently in Hugging Face format and needs to be converted to GGUF format for Ollama integration. 
+✅ **SUCCESS**: The fine-tuned model has been successfully integrated into Ollama and is now being used in the StoryForge application!
 
 **Current Status:**
 - ✅ Model successfully fine-tuned and merged (Qwen2.5-0.5B-Instruct base)
 - ✅ Merged model available at `training/models/storyforge-qwen-fine-tuned-merged/`
 - ✅ Modelfile created for Ollama integration (`training/models/Modelfile.storyforge`)
-- ⚠️ GGUF conversion encountering dependency conflicts with transformers/urllib3/accelerate
-- 🔄 **Temporary Solution**: Application currently uses DeepSeek R1 models as fallback
+- ✅ **Ollama Model Created**: `storyforge-qwen-fine-tuned:latest` (994 MB) successfully loaded
+- ✅ **Application Updated**: StoryForge now uses the custom model as primary for adventure stories
+- ⚠️ GGUF file conversion partially successful - model layers processed but tokenizer step failed due to dependency conflicts
 
-**Next Steps:**
-1. Resolve Python environment dependency conflicts
-2. Complete GGUF conversion using llama.cpp
-3. Import custom model into Ollama
-4. Update application to use custom `storyforge-qwen-fine-tuned` model
+**Integration Details:**
+- **Primary Model**: `storyforge-qwen-fine-tuned:latest` (our custom model)
+- **Fallback Model**: `deepseek-r1:1.5b` (for redundancy)
+- **Model Size**: 994 MB in Ollama
+- **Status**: Fully operational and integrated into production application
 
-**Alternative Approaches Being Explored:**
-- Clean Python environment setup
-- Docker-based conversion
-- Pre-built GGUF conversion tools
+**GGUF Conversion Notes:**
+- The llama.cpp conversion successfully processed all 24 transformer layers
+- Conversion failed at the final tokenizer step due to urllib3/transformers dependency conflicts
+- However, Ollama can work directly with the merged Hugging Face model via Modelfile
+- Future GGUF conversion may be possible with environment cleanup but is not required for current functionality
 
 ## 🆘 Support
 

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Story generation with primary model (DeepSeek R1)
+// Story generation with primary model (StoryForge Custom Model)
 async function generateWithPrimaryModel(prompt: string, characters: string, storyHistory: string) {
   try {
-    // Use Ollama with DeepSeek R1 (latest version available)
+    // Use Ollama with our custom fine-tuned StoryForge model
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'deepseek-r1:latest',
+        model: 'storyforge-qwen-fine-tuned:latest',
         prompt: `You are a helpful AI assistant that creates engaging, age-appropriate adventure stories for children aged 9-12. 
 
 Characters: ${characters}
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({ 
     message: 'Adventure Story API is running',
-    models: ['deepseek-r1:latest', 'deepseek-r1:1.5b'],
+    models: ['storyforge-qwen-fine-tuned:latest', 'deepseek-r1:1.5b'],
     status: 'active'
   });
 }
