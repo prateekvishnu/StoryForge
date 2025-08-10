@@ -9,6 +9,24 @@
 
 StoryForge is a modern, child-safe AI story generation platform that empowers young minds to create interactive adventures, mysteries, fantasies, and educational stories. Built with cutting-edge AI technology and designed with children's safety and creativity in mind.
 
+## 📸 Screenshots
+
+> **Note**: Add your screenshots to the `images/` directory to display them here.
+
+### 🏠 StoryForge Landing Page
+![StoryForge Landing Page](images/StoryForge.png)
+*The main landing page showcasing the StoryForge interface*
+
+### 📖 Story Creation Interface
+![Story Creation Interface](images/story.png)
+*Interactive story creation with character building and story generation options*
+
+**To add these images:**
+1. Create an `images/` directory in your project root
+2. Add `StoryForge.png` (landing page screenshot)
+3. Add `story.png` (story creation interface screenshot)
+4. The images will automatically display in this README
+
 ## 🌟 Features
 
 ### 🎮 **Choose-Your-Adventure Stories**
