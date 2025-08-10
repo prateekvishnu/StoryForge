@@ -1,3 +1,4 @@
 training/models/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
 training/models/**/*.bin filter=lfs diff=lfs merge=lfs -text
 training/models/**/*.gguf filter=lfs diff=lfs merge=lfs -text
+training/models/**/*.pt filter=lfs diff=lfs merge=lfs -text
