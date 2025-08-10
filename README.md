@@ -51,6 +51,31 @@ StoryForge is a modern, child-safe AI story generation platform that empowers yo
 - **Mobile-friendly** design for all devices
 - **Accessibility features** built-in
 
+
+## StoryForge — Project Showcase
+
+A quick visual tour of StoryForge.
+
+<div align="center">
+
+| Landing Page | Build Characters | Example Story |
+|---:|:---:|:---:|
+| <img src="docs/images/StoryForge.png" alt="StoryForge landing page" width="350"/> | <img src="docs/images/Characters.png" alt="Build Characters page" width="350"/> | <img src="docs/images/Story.png" alt="Example story view" width="350"/> |
+
+| Generated Story (options) | Generated Story (next part) |
+|---:|:---:|
+| <img src="docs/images/Story1.png" alt="Generated story with 3 choices and 1 open option" width="350"/> | <img src="docs/images/Story2.png" alt="Next part of generated story with more options" width="350"/> |
+
+</div>
+
+*Images above:*
+- **StoryForge.png** — Landing page  
+- **Characters.png** — Build Characters page  
+- **Story.png** — Example story screen  
+- **Story1.png** — Generated story (3 choices + open option)  
+- **Story2.png** — Next part of story with more options
+
+
 ## 🚀 Quick Start
 
 ### Prerequisites
