@@ -9,16 +9,6 @@
 
 StoryForge is a modern, child-safe AI story generation platform that empowers young minds to create interactive adventures, mysteries, fantasies, and educational stories. Built with cutting-edge AI technology and designed with children's safety and creativity in mind.
 
-## 📸 Screenshots
-
-### 🏠 StoryForge Landing Page
-![StoryForge Landing Page](images/StoryForge.png)
-*The main landing page showcasing the StoryForge interface and AI-powered story creation*
-
-### 📖 Story Creation Interface
-![Story Creation Interface](images/story.png)
-*Interactive story creation with character building, story generation options, and choose-your-adventure features*
-
 ## 🌟 Features
 
 ### 🎮 **Choose-Your-Adventure Stories**
@@ -50,7 +40,6 @@ StoryForge is a modern, child-safe AI story generation platform that empowers yo
 ### 🤖 **AI Technology**
 - **Custom Fine-Tuned Model** - Qwen2.5-0.5B specialized for children's stories
 - **Local AI processing** with Ollama integration
-- **DeepSeek 1.5B model** optimized for fast story generation
 - **Advanced prompt engineering** for consistent, quality output
 - **Rate limiting** and connection pooling for stability
 - **LoRA fine-tuning** on 3,685 children's stories for improved quality
@@ -69,15 +58,6 @@ StoryForge is a modern, child-safe AI story generation platform that empowers yo
 - **Ollama** installed locally
 - **Git** for version control
 
-### System Requirements for Ollama
-- **RAM**: Minimum 4GB, Recommended 8GB+ for larger models
-- **Storage**: 2-10GB depending on model size
-- **CPU**: Multi-core processor (4+ cores recommended)
-- **GPU**: Optional but recommended for faster inference
-  - NVIDIA: CUDA 11.8+ with 4GB+ VRAM
-  - AMD: ROCm support (experimental)
-  - Apple Silicon: Native MPS acceleration
-
 ### Installation
 
 1. **Clone the repository**
@@ -91,20 +71,13 @@ StoryForge is a modern, child-safe AI story generation platform that empowers yo
    npm install
    ```
 
-3. **Set up Ollama and pull the model**
+3. **Set up Ollama and load the custom model**
    ```bash
    # Install Ollama (if not already installed)
    curl -fsSL https://ollama.ai/install.sh | sh
    
-   # Start Ollama service
-   ollama serve &
-   
-   # Pull the DeepSeek model (default)
-   ollama pull deepseek-r1:1.5b
-   
-   # Optional: Pull additional models for different use cases
-   ollama pull phi3:3.8b      # Higher quality stories
-   ollama pull qwen2.5:0.5b   # Faster generation
+   # Load the custom StoryForge model (already included in the repo)
+   ollama create storyforge-qwen-fine-tuned -f training/models/Modelfile.storyforge
    ```
 
 4. **Initialize the database**
@@ -150,7 +123,7 @@ Visit `/test-adventure` to experience a pre-built choose-your-adventure story fe
 ### Tech Stack
 - **Frontend**: Next.js 14 with TypeScript
 - **UI Framework**: Material-UI 5
-- **AI Engine**: Ollama with DeepSeek 1.5B model
+- **AI Engine**: Ollama with custom StoryForge fine-tuned model
 - **Database**: SQLite with better-sqlite3
 - **Styling**: Material-UI theme system
 - **State Management**: React hooks and context
@@ -202,7 +175,7 @@ DATABASE_URL="./data/storyforge.db"
 
 # Ollama Configuration
 OLLAMA_BASE_URL="http://localhost:11434"
-OLLAMA_MODEL="deepseek-r1:1.5b"
+OLLAMA_MODEL="storyforge-qwen-fine-tuned:latest"
 
 # Optional: API Keys for external services
 # ANTHROPIC_API_KEY=your_key_here
@@ -210,190 +183,19 @@ OLLAMA_MODEL="deepseek-r1:1.5b"
 ```
 
 ### AI Models
-The application supports multiple models:
+The application uses a custom fine-tuned model optimized for children's story generation:
 
-#### **Custom Fine-Tuned Model (Recommended)**
-- **StoryForge-Qwen-v1.0** - Custom fine-tuned Qwen2.5-0.5B model
-- **Specialized for children's stories** - Trained on 3,685 curated children's stories
+#### **StoryForge Custom Model (Primary)**
+- **Model Name**: `storyforge-qwen-fine-tuned:latest`
+- **Base Model**: Qwen2.5-0.5B-Instruct (494M parameters)
+- **Specialization**: Fine-tuned for children's stories on 3,685 curated stories
 - **Training Details**:
-  - Base Model: Qwen/Qwen2.5-0.5B-Instruct
   - Training Steps: 924 steps across 4 epochs
   - LoRA Configuration: r=16, alpha=32
   - Training Loss: 5.69 → Optimized for story generation
   - Training Date: August 8, 2025
-
-#### **Ollama Local Models**
-StoryForge is designed to work with Ollama for local AI processing, giving you complete control over your AI models and data privacy.
-
-##### **Recommended Models**
-- **DeepSeek R1 1.5B** - Fast, efficient for story generation (default)
-- **Phi-3 3.8B** - Higher quality, slower generation
-- **Llama3.2 3B** - Balanced performance and quality
-- **Qwen2.5 0.5B** - Lightweight, fast inference
-
-##### **Advanced Models**
-- **Mistral 7B** - High quality, requires more RAM
-- **CodeLlama 7B** - Good for educational stories
-- **Gemma 2B** - Google's lightweight model
-
-##### **Custom Fine-Tuned Models**
-You can also use your own fine-tuned models by converting them to Ollama format and placing them in your Ollama models directory.
-
-## 🚀 Ollama Setup & Usage
-
-### **Installation**
-
-#### **macOS**
-```bash
-# Using Homebrew
-brew install ollama
-
-# Or download from official site
-curl -fsSL https://ollama.ai/install.sh | sh
-```
-
-#### **Linux**
-```bash
-# Ubuntu/Debian
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Arch Linux
-yay -S ollama
-
-# Fedora
-sudo dnf install ollama
-```
-
-#### **Windows**
-```bash
-# Using winget
-winget install Ollama.Ollama
-
-# Or download from https://ollama.ai/download
-```
-
-### **Starting Ollama Service**
-
-```bash
-# Start the Ollama service
-ollama serve
-
-# Or run in background
-ollama serve &
-```
-
-### **Model Management**
-
-#### **Pull Models**
-```bash
-# Pull the default model (DeepSeek R1 1.5B)
-ollama pull deepseek-r1:1.5b
-
-# Pull other recommended models
-ollama pull phi3:3.8b
-ollama pull llama3.2:3b
-ollama pull qwen2.5:0.5b
-
-# Pull advanced models (more RAM required)
-ollama pull mistral:7b
-ollama pull codellama:7b
-ollama pull gemma2:2b
-```
-
-#### **List Available Models**
-```bash
-# List all installed models
-ollama list
-
-# List available models on Ollama library
-ollama list --remote
-```
-
-#### **Remove Models**
-```bash
-# Remove a model to free up disk space
-ollama rm deepseek-r1:1.5b
-```
-
-### **Model Configuration**
-
-#### **Environment Variables**
-```bash
-# Set your preferred model in .env
-OLLAMA_MODEL="deepseek-r1:1.5b"
-
-# Or use a different model for specific use cases
-OLLAMA_MODEL="phi3:3.8b"  # Higher quality stories
-OLLAMA_MODEL="qwen2.5:0.5b"  # Faster generation
-```
-
-#### **Performance Tuning**
-```bash
-# Set number of threads (adjust based on your CPU)
-export OLLAMA_NUM_THREADS=8
-
-# Set GPU layers (if using GPU acceleration)
-export OLLAMA_GPU_LAYERS=35
-
-# Memory optimization
-export OLLAMA_GPU_MEMORY_UTILIZATION=0.8
-```
-
-### **Testing Ollama Integration**
-
-#### **Health Check**
-```bash
-# Test if Ollama is running
-curl http://localhost:11434/api/tags
-
-# Test model response
-ollama run deepseek-r1:1.5b "Write a short children's story about a brave mouse"
-```
-
-#### **StoryForge Integration Test**
-```bash
-# Test the StoryForge API with Ollama
-curl -X POST http://localhost:3000/api/stories/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "A magical forest adventure",
-    "ageGroup": "9-12",
-    "storyType": "fantasy",
-    "tone": "exciting"
-  }'
-```
-
-### **Troubleshooting**
-
-#### **Common Issues**
-```bash
-# If Ollama service won't start
-sudo systemctl start ollama
-
-# If model download fails
-ollama pull deepseek-r1:1.5b --insecure
-
-# Check Ollama logs
-ollama logs
-
-# Reset Ollama (removes all models)
-ollama reset
-```
-
-#### **Performance Issues**
-- **Slow generation**: Try smaller models like `qwen2.5:0.5b`
-- **High memory usage**: Reduce `GPU_LAYERS` or use CPU-only mode
-- **Poor quality**: Use larger models like `mistral:7b` or `phi3:3.8b`
-
-#### **Network Issues**
-```bash
-# If behind corporate firewall, use proxy
-export HTTP_PROXY=http://proxy.company.com:8080
-export HTTPS_PROXY=http://proxy.company.com:8080
-
-# Or configure Ollama to use custom registry
-ollama pull model:tag --registry https://custom.registry.com
-```
+- **Model Size**: 994 MB in Ollama
+- **Integration**: Ready-to-use via Ollama with included Modelfile
 
 ## 🎓 Model Training
 
@@ -432,6 +234,13 @@ python training/scripts/model_manager.py
 - **Safety**: Improved age-appropriate content generation
 - **Speed**: Ultra-fast inference on consumer hardware
 
+### **Ready-to-Use Model**
+The fine-tuned model is already integrated and ready to use:
+- **Model Name**: `storyforge-qwen-fine-tuned:latest`
+- **Modelfile**: Included at `training/models/Modelfile.storyforge`
+- **Size**: 994 MB in Ollama
+- **Status**: ✅ Successfully tested and deployed
+
 ## 🧪 Testing
 
 ### Database Testing
@@ -441,7 +250,7 @@ npm run db:test
 
 ### Story Generation Testing
 ```bash
-# Test story generation API
+# Test story generation API with custom model
 curl -X POST http://localhost:3000/api/stories/generate \
   -H "Content-Type: application/json" \
   -d '{"prompt":"A brave explorer finds a treasure","ageGroup":"9-12","storyType":"adventure"}'
