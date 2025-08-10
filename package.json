@@ -5,7 +5,7 @@
   "description": "Interactive Adventure Creator - AI-powered storytelling platform for children ages 7-16",
   "author": "StoryForge Team",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

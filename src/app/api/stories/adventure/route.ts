@@ -1,5 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Function to validate and fix short choices
+function validateAndFixChoices(choices: string[], prompt: string, story: string): string[] {
+  const minWords = 3; // Minimum words per choice
+  
+  // Filter out choices that are too short or contain gibberish
+  const validChoices = choices.filter(choice => {
+    const wordCount = choice.trim().split(/\s+/).length;
+    const hasGibberish = /[^\w\s.,!?-]/.test(choice) || choice.includes('**') || choice.includes('Accessor');
+    return wordCount >= minWords && !hasGibberish;
+  });
+  
+  // If we don't have enough valid choices, generate better ones
+  if (validChoices.length < 3) {
+    const context = story.length > 100 ? story.substring(0, 100) + "..." : story;
+    const fallbackChoices = [
+      `Continue exploring the area and discover what lies ahead`,
+      `Talk to someone nearby to learn more about the situation`,
+      `Try a different approach to solve the current challenge`
+    ];
+    
+    // Combine valid choices with fallback choices
+    const allChoices = [...validChoices, ...fallbackChoices];
+    return allChoices.slice(0, 3);
+  }
+  
+  return validChoices.slice(0, 3);
+}
+
 // Story generation with primary model (StoryForge Custom Model)
 async function generateWithPrimaryModel(prompt: string, characters: string, storyHistory: string) {
   try {
@@ -68,14 +96,8 @@ C: [third choice]`,
         .slice(0, 3);
     }
 
-    // Fallback: if no proper choices found, generate default ones
-    if (choices.length === 0) {
-      choices = [
-        "Explore deeper into the area",
-        "Talk to someone nearby for help",
-        "Try a different approach"
-      ];
-    }
+    // Validate and fix choices using our new function
+    choices = validateAndFixChoices(choices, prompt, story);
 
     // Clean up story text
     story = story.replace(/^\*+|\*+$/g, '').trim();
@@ -147,14 +169,8 @@ C: [choice 3]`,
         .slice(0, 3);
     }
 
-    // Provide default choices if parsing failed
-    if (choices.length === 0) {
-      choices = [
-        "Continue exploring the area",
-        "Talk to someone nearby", 
-        "Try something completely different"
-      ];
-    }
+    // Validate and fix choices using our validation function
+    choices = validateAndFixChoices(choices, prompt, story);
 
     // Clean up story text
     story = story.replace(/^\*+|\*+$/g, '').trim();
